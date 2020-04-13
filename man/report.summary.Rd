@@ -28,6 +28,6 @@ function to summarize the current situation, will download the latest data and s
 report.summary()
 
 # get the top 20
-report.summary(20)
+report.summary(Nentries=20)
 
 }

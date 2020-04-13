@@ -6,7 +6,10 @@
 \usage{
 totals.plt(
   data0 = NULL,
-  geo.loc = NULL,
+  geo.loc0 = NULL,
+  one.plt.per.page = FALSE,
+  log.plt = TRUE,
+  with.totals = FALSE,
   interactive.fig = TRUE,
   fileName = NULL
 )
@@ -14,7 +17,13 @@ totals.plt(
 \arguments{
 \item{data0}{time series dataset to process, default all the possible cases: 'confirmed' and 'deaths' for all countries/regions}
 
-\item{geo.loc}{geographical location, country/region or province/state to restrict the analysis to}
+\item{geo.loc0}{geographical location, country/region or province/state to restrict the analysis to}
+
+\item{one.plt.per.page}{boolean flag to have one plot per figure}
+
+\item{log.plt}{include a log scale plot in the static plot}
+
+\item{with.totals}{a boolean flag to indicate whether the totals should be displayed with the records for the specific location}
 
 \item{interactive.fig}{swith to turn off/on an interactive plot}
 
@@ -29,5 +38,6 @@ TS.data <- covid19.data("ts-ALL")
 
 # static and interactive plot 
 totals.plt(TS.data)
+
 
 }

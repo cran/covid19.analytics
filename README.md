@@ -1,5 +1,12 @@
 # COVID19.Analytics
 
+<!-- badges: start -->
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-last-release/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
+[![CRAN checks](https://cranchecks.info/badges/worst/covid19.analytics)](https://cranchecks.info/pkgs/covid19.analytics)
+[![Downloads](https://cranlogs.r-pkg.org/badges/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
+<!-- badges: end -->
+
+
 ## Introduction
 The "covid19.analytics" R package allows users to obtain live\* worldwide data from the
 *novel CoronaVirus Disease* originally reported in 2019, CoViD-19, as published by the
@@ -114,17 +121,7 @@ basics functions to estimate totals per regions/country/cities, growth rates
 and daily changes in the reported number of cases.
 
 
-### Experimental: Modelling the evolution of the Virus spread
-We are working in the development of *modelling* capabilities.
-A preliminary prototype has been included and can be accessed using the `generate.SIR.model` function, which implements a simple SIR (*Susceptible-Infected-Recovered*) ODE model using the actual data of the virus.
-
-
-### Further Features
-We will continue working on adding and developing new features to the package,
-in particular modelling and predictive capabilities.
-
-
-### Summary of the Functions from the "covid19.analytics" Package
+### Overview of the Main Functions from the "covid19.analytics" Package
 <!--
  | Function  | description |
  | --------	 | ----------- |
@@ -184,7 +181,7 @@ in particular modelling and predictive capabilities.
  </tr>
   <tr>
    <td> <code>total.plts</code> </td>
-   <td> plots in a static and interactive plot total number of cases per day </td>
+   <td> plots in a static and interactive plot total number of cases per day, the user can specify multiple locations or global totoals </td>
    <td> static and interactive plot </td>
  </tr>
   <tr>
@@ -201,12 +198,154 @@ in particular modelling and predictive capabilities.
    <td> list containing the fits for the SIR model </td>
  </tr>
   <tr>
-   <td> <code>plot.SIR.model</code> </td>
+   <td> <code>plt.SIR.model</code> </td>
    <td> plot the results from the SIR model </td>
    <td> static and interactive plots </td>
  </tr>
 </table>
 <!------- TABLE ------>
+
+
+
+### Details and Specifications of the Analytical & Visualization Functions
+
+#### Reports
+The `report.summary()` generates an overall report summarizing the different datasets.
+It can summarize the "Time Series" data (`cases.to.process="TS"`), the "aggregated" data (`cases.to.process="AGG"`) or both (`cases.to.process="ALL"`).
+It will display the top 10 entries in each category, or the number indicated in the `Nentries` argument, for displaying all the records set `Nentries=0`.
+
+In each case ("TS" or/and "AGG") will present tables ordered by the different cases included, i.e.
+confirmed infected, deaths, recovered and active cases.
+
+The dates when the report is generated and the date of the recorded data will be included at the beginning of each table.
+
+It will also compute the totals, averages, standard deviations and percentages of various quantities:
+* it will determine the number of *unique* locations processed within the dataset
+* it will compute the total number of cases per case
+
+* Percentages: percentages are computed as follow:
+  - for the "Confirmed" cases, as the ratio between the corresponding number of cases and the total number of cases, i.e. a sort of *"global percentage"* indicating the percentage of infected cases wrt the rest of the world
+  - for the other categories, "Deaths"/"Recovered"/"Active", the percentage of a given category is computed as the ratio between the number of cases in the corresponding category divided by the "Confirmed" number of cases, i.e. a *relative percentage* with respect to the number of confirmed infected cases in the given region
+
+* For "Time Series" data:
+ - it will show the *delta* (change or variation) in the last day, and when possible will also display the percentage of "Recovered" and "Deaths" with respect to the "Confirmed" number of cases
+ - The column "GlobalPerc" is computed as the ratio between the number of cases for a given country over the total of cases reported
+ - The *"Global Perc. Average (SD: standard deviation)"* is computed as the average (standard deviation) of the number of cases among all the records in the data
+ - The *"Global Perc. Average (SD: standard deviation) in top X"* is computed as the average (standard deviation) of the number of cases among the top *X* records
+
+
+Typical structure of a `summary.report()` output for the Time Series data:
+```
+############################################################################### 
+  ##### TS-CONFIRMED Cases  -- Data dated:  2020-04-04  ::  2020-04-05 17:27:17 
+################################################################################ 
+  Number of Countries/Regions reported:  181 
+  Number of Cities/Provinces reported:  82 
+  Unique number of geographical locations combined: 259 
+-------------------------------------------------------------------------------- 
+  Worldwide  ts-confirmed  Totals: 1197405 
+-------------------------------------------------------------------------------- 
+    Country.Region Province.State Totals GlobalPerc LastDayChange
+1             US                308850      25.79         33264
+2          Spain                126168      10.54          6969
+3          Italy                124632      10.41          4805
+4        Germany                 96092       8.03          4933
+-------------------------------------------------------------------------------- 
+  Global Perc. Average:  0.39 (sd: 2.02) 
+  Global Perc. Average in top  10 :  7.98 (sd: 7) 
+-------------------------------------------------------------------------------- 
+.
+.
+.
+```
+
+Typical structure of a `summary.report()` output for the *Aggregated* data:
+```
+########################################################################################################################## 
+  ##### AGGREGATED Data  -- ORDERED BY  CONFIRMED Cases  -- Data dated:  2020-04-04  ::  2020-04-05 17:27:19 
+########################################################################################################################## 
+  Number of Countries/Regions reported: 181 
+  Number of Cities/Provinces reported: 137 
+  Unique number of geographical locations combined: 316 
+-------------------------------------------------------------------------------------------------------------------------- 
+     Country_Region Province_State Confirmed Perc.Confirmed Deaths Perc.Deaths Recovered Perc.Recovered Active Perc.Active
+1          Spain                   126168          10.54  11947        9.47     34219          27.12  80002       63.41
+2          Italy                   124632          10.41  15362       12.33     20996          16.85  88274       70.83
+3        Germany                    96092           8.03   1444        1.50     26400          27.47  68248       71.02
+.
+.
+.
+```
+
+A full example of this report for today can be seen <a href="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.txt" target="_blank">here</a> (updated twice a day, daily).
+
+In addition to this, the function will also generate some graphical outputs, including pie and bar charts representing the top regions in each category.
+
+
+#### Totals per Location & Growth Rate
+It is possible to dive deeper into a particular location by using the `tots.per.location()` and `growth.rate()` functions.
+Theses functions are capable of processing different types of data, as far as these are "Time Series" data.
+It can either focus in one category (eg. "TS-confirmed","TS-recovered","TS-deaths",) or all ("TS-all").
+When these functions detect different type of categories, each category will be processed separatedly.
+Similarly the functions can take multiple locations, ie. just one, several ones or even "all" the locations within the data.
+The locations can either be countries, regions, provinces or cities. If an specified location includes multiple entries, eg. a country that has several cities reported, the functions will group them and process all these regions as the location requested.
+
+
+##### Totals per Location
+This function will plot the number of cases as a function of time for the given locations and type of categories, in two plots: a log-scale scatter one a linear scale bar plot one.
+
+When the function is run with multiple locations or all the locations, the figures will be adjusted to display multiple plots in one figure in a mosaic type layout.
+
+Additionally, the function will attempt to generate different fits to match the data:
+* an exponential model using a Linear Regression method
+* a Poisson model using a General Linear Regression method
+* a Gamma model using a General Linear Regression method
+The function will plot and add the values of the coefficients for the models to the plots and display a summary of the results in screen.
+
+It is possible to instruct the function to draw a "confidence band" based on a *moving average*, so that the trend is also displayed including a region of higher confidence based on the mean value and standard deviation computed considering a time interval set to equally dividing the total range of time over 10 equally spaced intervals.
+
+The function will return a list combining the results for the totals for the different locations as a function of time.
+
+
+##### Growth Rate
+The `growth.rate()` function allows to compute *daily changes* and the *growth rate* defined as the ratio of the daily changes between two consecutive dates.
+
+The `growth.rate()` shares all the features of the `tots.per.location()` function, i.e. can process the different types of cases and multiple locations.
+
+The graphical output will display two plots per location:
+* a scatter plot with the number of changes between consecutive dates as a function of time, both in linear scale (left vertical axis) and log-scale (right vertical axis) combined
+* a bar plot displaying the growth rate for the particular region as a function of time.
+
+When the function is run with multiple locations or all the locations, the figures will be adjusted to display multiple plots in one figure in a mosaic type layout.
+In addition to that, when there is more than one location the function will also generate two different styles of heatmaps comparing the changes per day and growth rate among the different locations (vertical axis) and time (horizontal axis).
+
+The function will return a list combining the results for the "changes per day" and the "growth rate" as a function of time.
+
+
+#### Plotting Totals
+The function `totals.plt()` will generate plots of the total number of cases as a function of time.
+It can be used for the total data or for an specific or multiple locations.
+The function can generate static plots and/or interactive ones, as well, as linear and/or semi-log plots.
+
+
+#### Plotting Cases in the World
+The function `live.map()` will display the different cases in each corresponding location all around the world in an interactive map of the world.
+It can be used with time series data or aggregated data, aggregated data offers a much more detailed information about the geographical distribution.
+
+
+### Experimental: Modelling the evolution of the Virus spread
+We are working in the development of *modelling* capabilities.
+A preliminary prototype has been included and can be accessed using the `generate.SIR.model` function, which implements a simple SIR (*Susceptible-Infected-Recovered*) ODE model using the actual data of the virus.
+
+This function will try to identify the data points where the onset of the epidemy began and consider the following data points to generate a proper guess for the two parameters describing the SIR ODE system.
+After that, it will solve the different equations and provide details about the solutions as well as plot them in a static and interactive plot.
+
+
+### Further Features
+We will continue working on adding and developing new features to the package,
+in particular modelling and predictive capabilities.
+
+
 
 ## Installation
 For using the "covi19.analytics" package, first you will need to install it.
@@ -267,15 +406,27 @@ Read covid19's genomic data
 ```R
 # a quick function to overview top cases per region for time series and aggregated records
 report.summary()
-
-# save the tables into a text file named 'covid19-SummaryReport_CURRENTDATE.txt' where CURRRENTDATE is the actual date
-report.summary(saveReport=TRUE)
 ```
 
 <p>
   <img src="man/figures/report-summ-agg.pdf" width="45%" />
   <img src="man/figures/report-summ-TSconfirmed.pdf" width="45%" />
 </p>
+
+
+```R
+# save the tables into a text file named 'covid19-SummaryReport_CURRENTDATE.txt'
+# where *CURRRENTDATE* is the actual date
+report.summary(saveReport=TRUE)
+```
+
+<object data="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.pdf" type="application/pdf" width="650px" height="500px">
+ <embed src="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.pdf">
+ <p>
+  E.g. today's report is available <a href="https://github.com/mponce0/covid19.analytics/tree/master/man/figures/covid19-SummaryReport.txt">here</a> 
+ </p>
+ </embed>
+</object>
 
 
 #### Totals per Country/Region/Province
@@ -433,6 +584,21 @@ totals.plt(TS.data)
 </object>
 
 ```R
+# totals for Ontario and Canada, without displaying totals and one plot per page
+totals.plt(TS.data, c("Canada","Ontario"), with.totals=FALSE,one.plt.per.page=TRUE)
+
+# totals for Ontario, Canada, Italy and Uruguay; including global totals with the linear and semi-log plots arranged one next to the other
+totals.plt(TS.data, c("Canada","Ontario","Italy","Uruguay"), with.totals=TRUE,one.plt.per.page=FALSE)
+
+# totals for all the locations reported on the dataset, interactive plot will be saved as "totals-all.html"
+totals.plt(TS.data, "ALL", fileName="totals-all")
+```
+
+<object data="man/figures/totals-all.html" width="100%" height="600">
+</object>
+
+
+```R
 # retrieve aggregated data
 data <- covid19.data("aggregated")
 
@@ -478,7 +644,7 @@ generate.SIR.model(data,"Canada",tot.population=37590000)
 # modelling the spread for the whole world, storing the model and generating an interactive visualization
 world.SIR.model <- generate.SIR.model(data,"ALL", t0=1,t1=15, tot.population=7.8e9, staticPlt=FALSE)
 # plotting and visualizing the model
-plot.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.model")
+plt.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.model")
 ```
 
 <object data="man/figures/world.SIR.model.html" width="105%" height="525"></object>
@@ -523,6 +689,7 @@ https://wwwnc.cdc.gov/eid/article/25/1/17-1901_article
 -->
 
 ### Dashboards
+* https://www.covidgraph.com
 <!-- * https://ici.radio-canada.ca/info/2020/coronavirus-covid-19-pandemie-cas-carte-maladie-symptomes-propagation/ -->
 * https://ici.radio-canada.ca/info/2020/coronavirus-covid-19-pandemie-cas-carte-maladie-symptomes-propagation/index-en.html
 * https://resources-covid19canada.hub.arcgis.com/

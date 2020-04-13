@@ -4,7 +4,7 @@
 \alias{log.sc.setup}
 \title{aux fn to create a log-scale pulldown option in plotly plots}
 \usage{
-\method{log}{sc.setup}(nbr.traces)
+\method{log}{sc.setup}(nbr.traces, tot.traces)
 }
 \arguments{
 \item{nbr.traces}{number of traces in order to set Ts/Fs}

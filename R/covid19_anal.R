@@ -225,7 +225,7 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 	cluster.type <- c("ALL","Country","City","Region","City/Region")
 
 	# check on the location
-	geo.loc <- checkGeoLoc(data,geo.loc)
+	geo.loc <- checkGeoLoc(data0,geo.loc)
 
 	# where to store the results
 	total.changes.per.day <-data.frame() 
@@ -382,18 +382,109 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 	return(list(Changes=total.changes.per.day,Growth.Rate=total.gr.per.day))
 }
 
+
+#############################################################################
+#############################################################################
+#### AUXILIARY FUNCTIONS FOR REPORTS
+
+        ######################
+
+        intro.header <- function(i, data,colN,country.col,province.col, scr.len=80) {
+
+                header("#", total.len=scr.len)
+                report.title <- paste(toupper(i),"Cases  -- Data dated: ",names(data)[colN]," :: ",as.character(Sys.time()))
+                header('',paste0("##### ",report.title))
+                header("#", total.len=scr.len)
+
+                country.col <- pmatch("Country", names(data))
+                province.col <- pmatch("Province", names(data))
+                header('',paste("Number of Countries/Regions reported: ",length(unique(data[,country.col]))) )
+                header('',paste("Number of Cities/Provinces reported: ",length(unique(data[,province.col]))) )
+                header('',paste0("Unique number of geographical locations combined: ",nrow(unique(data[,c(country.col,province.col)]))))
+                header("-", total.len=scr.len)
+
+		if (length(colN)==1) {
+			header('',paste("Worldwide ",i," Totals:", sum(data[,colN],na.rm=TRUE)))
+			#header('',paste(Nentries," Top Totals:", sum(data[,colN],na.rm=TRUE)))
+			header('-', total.len=scr.len)
+		} else {
+			for (j in colN) {
+				header('',paste("Worldwide ",i," Totals:", sum(data[,j],na.rm=TRUE)))
+			}
+			#header('-', total.len=scr.len)
+		}
+
+                return(invisible(report.title))
+        }
+
+        ######################
+
+        report.Avgs <- function(data,target="Perc",descr="") {
+
+                Perc.col <- which(grepl(target,names(data)))
+                if (length(Perc.col)>0) {
+                        #print(data[,Perc.col])
+			tgt.col <- data[,Perc.col]
+			tgt.col <- tgt.col[!is.infinite(tgt.col)]
+			#print(tgt.col)
+                        mean.value <- round(mean(tgt.col,na.rm=TRUE),2)
+                        sd.value <- round(sd(tgt.col,na.rm=TRUE),2)
+                        if (!is.infinite(mean.value) & !is.na(mean.value))
+                                header( "", paste(descr,mean.value, paste0("(sd: ",sd.value,")")) )
+                }
+
+        }
+
+        #####################
+
+	report.Totals <- function(cases,totals,preTitle="",totEntries=NA) {
+		header('',eol='\n\n')
+		header('*')
+		header('*',"OVERALL SUMMARY")
+		header('*')
+		#print.Title <- TRUE
+		for (j in names(totals)) {
+			values <- totals[[j]]
+			#if (print.Title) {
+				header("", paste("**** ",preTitle,toupper(j),"****"))
+			#	print.Title <- TRUE
+			#}
+			header('',paste("\t",paste(cases,collapse="\t")))
+			header('',paste("\t",paste(round(values,2),collapse="\t")))
+			header('',paste0("\t\t\t",paste(round(values[2:3]/(values[1])*100,2),collapse="% \t\t"),"%"))
+                        ##header('',paste0("\t",paste(round(values/(totals[["tots"]][1])*100,2),collapse="% \t"),"%"))
+			#header('-')
+		}
+
+		if (!is.na(totEntries))
+			header('',paste('\n\n',"* Statistical estimators computed considering",totEntries,"independent reported entries"))
+
+		header('*')
+	}
+
 #############################################################################
 #############################################################################
 process.agg.cases <- function(data, Nentries, graphical.output) {
 
+	#######
+
 	comb.cols <- function(x,y) {
 
-		return(c(x[1:2],y[1],x[3],y[2],x[4],y[3]))
+		#return(c(x[1:2],y[1],x[3],y[2],x[4],y[3]))
+		return(c(x[1],y[1], x[2],y[2], x[3],y[3], x[4],y[4]))
 	}
 
+	#######
+
+	# set the length in chars for the output
+	scr.len <- 140
 
 	if (graphical.output)
 		par(mfrow=c(4,2))
+
+
+	# clean some spurious data
+	#data <- na.omit(data[,-1])
 
 	# define some cols and values...
 	colN <- ncol(data)
@@ -403,6 +494,7 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 	country.col <- pmatch("Country", col.names)
 	province.col <- pmatch("Province", col.names)
 	date.col <- pmatch("Last_Update", col.names)
+	combKey.col <- pmatch("Combined",col.names)
 
 	col.conf <- pmatch("Confirmed",col.names)
 	col.death <- pmatch("Deaths",col.names)
@@ -415,16 +507,26 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 
 	cases <- c("Confirmed","Deaths","Recovered","Active")
 	for (i in col.cases) {
-		header("#")
+
+		header("#", total.len=scr.len)
 		report.title <- paste("AGGREGATED Data  -- ORDERED BY ",toupper(col.names[i]),"Cases  -- Data dated: ",
 					as.character(max(as.Date(data[,date.col]))) ,
 					" :: ",as.character(Sys.time()) )
 		header('',paste0("##### ",report.title))
-		header("#")
+		header("#", total.len=scr.len)
 
-		header('',paste0("Total number of Countries/Regions affected: ",length(unique(data[,country.col]))))
-		header('',paste0("Total number of Cities/Provinces affected: ",length(unique(data[,province.col]))))
-		header("-")
+		header('',paste0("Number of Countries/Regions reported: ",length(unique(data[,country.col]))))
+		header('',paste0("Number of Cities/Provinces reported: ",length(unique(data[,province.col]))))
+		header('',paste0("Unique number of geographical locations combined: ",
+				length(unique(unlist(data[,combKey.col])))
+				#nrow(unique(data[,c(country.col,province.col)]))
+				) )
+		header("-", total.len=scr.len)
+
+		# display 'header'
+		#report.title <- intro.header(i, data,col.cases[i],
+		#				country.col,province.col, scr.len=scr.len)
+
 
 		# get percentage cases
 		cols.perc <- c()
@@ -440,23 +542,33 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 		# top countries/regions
 		#data.ordered <- data[order(data[,i],decreasing=TRUE),][1:Nentries,c(country.col,province.col, col.cases, cols.perc)]
 		custom.list <- comb.cols(col.cases,cols.perc)
-		data.ordered <- data[order(data[,i],decreasing=TRUE),][1:Nentries,c(country.col,province.col, custom.list)]
-#                names(data.ordered) <- c("Country.Region","Province.State", cases)
+		#print(custom.list)
+
+		# Select which columns to keep from the original dataframe
+		original.cols <- c(combKey.col)
+		upto.record <- min(nrow(data),Nentries)
+		#original.cols <- c(country.col,province.col,combKey.col)
+		data.ordered <- data[order(data[,i],decreasing=TRUE),][1:upto.record,c(original.cols, custom.list)]
+		#names(data.ordered) <- c("Country.Region","Province.State", cases)
+		row.names(data.ordered) <- 1:upto.record
 
                 print(data.ordered)
 
-		header("=")
+		header("=", total.len=scr.len)
 
 		target.col <- col.names[i]
 		ord.cty.col <- pmatch("Country",names(data.ordered))
 		ord.prv.col <- pmatch("Province",names(data.ordered))
+		ord.combKey.col <- pmatch("Combined",names(data.ordered))
+
                 # graphics
                 if (graphical.output) {
-                        legends <- paste(as.character(data.ordered[,ord.cty.col]),as.character(data.ordered[,ord.prv.col]),'\n',data.ordered[,target.col])
+			#legends <- paste(as.character(data.ordered[,ord.cty.col]),as.character(data.ordered[,ord.prv.col]),'\n',data.ordered[,target.col])
+			legends <- paste(as.character(data.ordered[,ord.combKey.col]),'\n',data.ordered[,target.col])
                         color.scheme <- heat.colors(Nentries)   #topo.colors(Nentries)
                                         #terrain.colors(Nentries)       #rainbow(Nentries)
 
-                        pie(data.ordered[,target.col],
+                        pie(na.omit(data.ordered[,target.col]),
                                 labels=legends,
                                 main=substr(report.title,1,floor(nchar(report.title)/2)),
                                 col=color.scheme )
@@ -470,6 +582,20 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 
 		# remove perc cols
 		data <- data[,-cols.perc]
+	}
+
+	## REPORT TOTALS
+	if (TRUE) {
+		#print(names(data)[col.cases])
+		header('',paste("\t",paste(names(data)[col.cases],collapse='\t')))
+		header('',"Totals",eol='')
+		header('',paste("\t",paste(sapply(data[,col.cases],sum),collapse='\t')))
+		header('',"Average",eol='')
+		header('',paste("\t",paste(round(sapply(data[,col.cases],mean),2),collapse='\t')))
+		header('',"Standard Deviation",eol='')
+		header('',paste("\t",paste(round(sapply(data[,col.cases],sd),2),collapse="\t")))
+
+		header('',paste('\n\n',"* Statistical estimators computed considering",nrow(data),"independent reported entries"))
 	}
 }
 
@@ -485,6 +611,7 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 #' @param  graphical.output  flag to deactivate graphical output
 #' @param  saveReport  flag to indicate whether the report should be saved in a file
 #'
+#' @importFrom  stats  sd
 #' @importFrom  grDevices  heat.colors
 #' @importFrom  graphics  pie
 #'
@@ -495,19 +622,25 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 #' report.summary()
 #'
 #' # get the top 20
-#' report.summary(20)
+#' report.summary(Nentries=20)
 #'
 
+	# reassign Nentries to Nentriex
+	Nentriex <- Nentries
 	Ndefault <- 10
 
-	if (!is.numeric(Nentries)) {
+	if (!is.numeric(Nentriex)) {
 		stop("The argument to this function must be a number!")
-	} else if (Nentries < 0) {
+	} else if (Nentriex < 0) {
 		message("Argument must be positive or zero (for listing all entries)!",'\n',
 			"Will assume default value:",Ndefault)
-		Nentries <- Ndefault
+		Nentriex <- Ndefault
 	}
 
+
+	# preserve user options
+	old.opts <- options("width")
+	options(width=200)
 
 	# preserve user graphical environment
 	if (graphical.output) {
@@ -527,30 +660,31 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 	col1 <- 5
 
 	#cases <- c("confirmed","recovered","deaths")
-	cases <- c("ts-confirmed","ts-recovered","ts-deaths")	#, "aggregated")
+	cases <- c("ts-confirmed","ts-deaths","ts-recovered")	#, "aggregated")
+
+	TS.totals <- list(tots=c(),avgs=c(),sds=c())
 	for (i in cases) {
 		# read data
 		data <- covid19.data(i)
 
-		# if Nentries i set to 0, will consider *all* entries
-		if (Nentries==0) Nentries <- nrow(data)
+		# if Nentries is set to 0, will consider *all* entries
+		if (Nentries==0) Nentriex <- nrow(data)
 
 		colN <- ncol(data)
 		nRecords <- nrow(data)
 #		if (grepl("aggregated",i))	col.Tgt <-
 
-		header("#")
-		report.title <- paste(toupper(i),"Cases  -- Data dated: ",names(data)[colN]," :: ",as.character(Sys.time()))
-		header('',paste0("##### ",report.title))
-		header("#")
+		# get totals per case
+		TS.totals$tots <- c(TS.totals$tots, sum(data[,colN],na.rm=TRUE))
+		TS.totals$avgs <- c(TS.totals$avgs, mean(data[,colN],na.rm=TRUE))
+		TS.totals$sds <-  c(TS.totals$sds , sd(data[,colN],na.rm=TRUE))
 
+		# indentify country and province columns
 		country.col <- pmatch("Country", names(data))
 		province.col <- pmatch("Province", names(data))
-		header('',paste("Total number of Countries/Regions affected: ",length(unique(data[,country.col]))) )
 
-		header('',paste("Total number of Cities/Provinces affected: ",length(unique(data[,province.col]))) )
-
-		header("-")
+		# display 'header'
+		report.title <- intro.header(i, data,colN,country.col,province.col)
 
 		# Totals per countries/cities
 		#data$Totals <- apply(data[,col1:colN],MARGIN=1,sum)
@@ -559,8 +693,8 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 		# store total nbr of cases
 		if (grepl("confirmed",i)) {
 			geo.list <- data[,c(country.col,province.col)]
-                        total.cases <- data[,ncol(data)]
-			colsF <- (colN+1):(colN+2)
+                        total.cases <- data[,colN]
+			colsF <- (colN+1):(colN+8)
 			total.global <- sum(total.cases)
 			data$GlobalPerc <- round((total.cases/total.global)*100,2)
 		} else {
@@ -570,41 +704,46 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 				&&  sum(as.character(data[,province.col])==as.character(geo.list[1:nRecords,2]))==nRecords ) {
 				# get percentage cases
 				data$Perc  <- round((data[,colN]/total.cases[1:nRecords])*100,2)
-				colsF <- (colN+1):(colN+2)
+				colsF <- (colN+1):(colN+8)
 			} else {
-				colsF <- colN+1
+				colsF <- (colN+1):(colN+7)
 			}
 		}
+		# last day change for all cases
+		data$"LastDayChange" <- data[,colN]-data[,colN-1]
+		data$"t-2" <- data[,colN-1]-data[,colN-2]
+		#data$"T-2" <- data[,colN]-data[,colN-2]
+		data$"t-3" <- data[,colN-2]-data[,colN-3]
+		data$"t-7" <- data[,colN-6]-data[,colN-7]
+		data$"t-14" <- data[,colN-13]-data[,colN-14]
+		data$"t-30" <- data[,colN-29]-data[,colN-30]
+
 		# top countries/regions
-		data.ordered <- data[order(data$Totals,decreasing=TRUE),][1:Nentries,c(country.col,province.col,colsF)]
+		upto.record <- min(nrow(data),Nentriex)
+		data.ordered <- data[order(data$Totals,decreasing=TRUE, na.last=NA),][1:upto.record,c(country.col,province.col,colsF)]
+		row.names(data.ordered) <- 1:upto.record
 		names(data.ordered)[1:3] <- c("Country.Region","Province.State","Totals")
 	
 		print(data.ordered)
 
-		# Average percentages...
-		Perc.col <- which(grepl("Perc",names(data)))
-		if (length(Perc.col)>0) {
-			header('-')
-			#print(data[,Perc.col])
-			header("",paste("Global Perc. Average: ",(mean(data[,Perc.col],na.rm=TRUE))) )
-		}
-		Perc.col.top <- which(grepl("Perc",names(data.ordered)))
-		if (length(Perc.col.top)>0) {
-			header("",paste("Global Perc. Average in top ",Nentries,": ",(mean(data.ordered[,Perc.col.top],na.rm=TRUE))) )		
-		}
+		# Report Average Percentages...
+		header('-')
+		report.Avgs(data,"Perc",descr="Global Perc. Average: ")
+		report.Avgs(data.ordered,"Perc",descr=paste("Global Perc. Average in top ",Nentriex,": "))
+		header('-')
 
 		header("=")
 
 		# graphics
 		if (graphical.output) {
 			legends <- paste(data.ordered$Country.Region,data.ordered$Province.State,'\n',data.ordered$Totals)
-			color.scheme <- heat.colors(Nentries)	#topo.colors(Nentries)
-					#terrain.colors(Nentries)	#rainbow(Nentries)
+			color.scheme <- heat.colors(Nentriex)	#topo.colors(Nentriex)
+					#terrain.colors(Nentriex)	#rainbow(Nentriex)
 
 			par(mfrow=c(1,2))
 			#par(mfrow=c(1,1))
 
-			pie(data.ordered$Totals,
+			pie(na.omit(data.ordered$Totals),
 				labels=legends,
 				main=substr(report.title,1,floor(nchar(report.title)/2)),
 				col=color.scheme )
@@ -623,10 +762,21 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 		process.agg.cases(covid19.data("aggregated"), Nentries, graphical.output)
 	}
 
+
+	#### OVERALL SUMMARY
+	if ( (toupper(cases.to.process)=="ALL") | (toupper(cases.to.process)=="TS") ) {
+	        report.Totals(cases,TS.totals, preTitle="Time Series",nrow(data))
+	}
+
 	if (saveReport) {
 		sink()
 		message("Report saved in ",fileName)
 	}
+
+	# reset options to user ones
+	options(old.opts)
+
+	#return(TS.totals)
 }
 
 #############################################################################
