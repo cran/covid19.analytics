@@ -17,6 +17,14 @@ The goal of this package is to make the latest data promptly available
 to researchers and the scientific community.
 
 <object data="man/figures/livemap.html" width="105%" height="525"></object>
+<!--
+.
+<object data="https://raw.githubusercontent.com/mponce0/covid19.reports/master/reports/livemap.html" width="105%" height="525"></object>
+.
+<object data="https://github.com/mponce0/covid19.reports/blob/master/reports/livemap.html" width="105%" height="525">
+</object>
+-->
+
 
 ### Data Accessibility
 The `covid19.data()` function allows users to obtain realtime data about the CoViD19 reported cases
@@ -48,7 +56,9 @@ dynamical situation with respect to data availability and integrity.
  | `ts-deaths`    |  time series data of fatal cases |
  | `ts-recovered` |  time series data of recovered cases |
  | `ts-ALL`       |  all time series data combined |
- **Deprecated data formats**
+ | `ts-confirmed-us` |  time series data of confirmed cases for the US detailed per state |
+ | `ts-deaths-us`    |  time series data of fatal cases for the US detailed per state |
+**Deprecated data formats**
  | `ts-dep-confirmed` | time series data of confirmed cases as originally reported (deprecated) |
  | `ts-dep-deaths`    | time series data of deaths as originally reported (deprecated) |
  | `ts-dep-recovered` | time series data of recovered cases as originally reported (deprecated)|
@@ -86,7 +96,7 @@ dynamical situation with respect to data availability and integrity.
     <td> all time series data combined </td>
   </tr>
   <tr>
-    <th colspan="2"> <b>Deprecated data formats</b> </th>
+     <th colspan="2"> <b>Deprecated data formats</b> </th>
   </tr>
   <tr>
    <td> <code>ts-dep-confirmed</code> </td>
@@ -107,12 +117,70 @@ dynamical situation with respect to data availability and integrity.
   <td> <code>ALL</code> </td>
   <td> all of the above </td>
  </tr>
+   <tr>
+    <th colspan="2"> Time Series data for <i>specific locations</i> </th>
+  </tr>
+   <tr>
+    <td> <code>ts-Toronto</code> </td>
+    <td> time series data of confirmed cases for the city of Toronto, ON - Canada </td> 
+  </tr>
+  <tr>
+    <td> <code>ts-confirmed-US</code> </td>
+    <td> time series data of confirmed cases for the US detailed per state </td> 
+  </tr>
+  <tr>
+    <td> <code>ts-deaths-US</code> </td>
+    <td> time series data of fatal cases for the US detailed per state </td> 
+  </tr>
 </table>
 <!------- TABLE ------>
 
 
+### Data Structure
+The *TimeSeries* data is organized in an specific manner with a given set of fields or columns,
+which resembles the following structure:
+
+<table>
+ <tr>
+  <td>"Province.State"</td>  <td>"Country.Region"</td>  <td>"Lat"</td>  <td>"Long"</td>  <td>...</td><td>seq of dates</td><td>...</td> 
+ </tr>
+</table>
+
+
+#### Using your own data and/or importing new data sets
+If you have data structured in a data.frame organized as described above, then most of the functions provided by the "covid19.analytics" package for analyzing *TimeSeries* data will work with your data.
+In this way it is possible to add new data sets to the ones that can be loaded using the repositories predefined in this package and extend the analysis capabilities to these new datasets.
+
+Be sure also to check the compatibility of these datasets using the `Data Integrity and Consistency Checks` functions described in the following section.
+
+
+### Data Integrity and Consistency Checks
+Due to the ongoing and rapid changing situation with the CoViD-19 pandemic, sometimes the reported data has been detected to change its internal format or even show some "anomalies" or "inconsistencies" (see https://github.com/CSSEGISandData/COVID-19/issues/).
+
+For instance, in some cumulative quantities reported in time series datasets, it has been observed that these quantities instead of continuously increase sometimes they decrease their values which is something that should not happen, (see for instance, https://github.com/CSSEGISandData/COVID-19/issues/2165). We refer to this as inconsistency of **"type II"**.
+
+Some negative values have been reported as well in the data, which also is not possible or valid; we call this inconsistency of **"type I"**.
+
+When this occurs, it happens at the level of the origin of the dataset, in our case, the one obtained from the JHU/CCESGIS repository [1].
+In order to make the user aware of this, we implemented two consistency and integrity checking functions:
+
+* `consistency.check()`, this function attempts to determine whether there are consistency issues within the data, such as, negative reported value (inconsistency of "type I") or anomalies in the cumulative quantities of the data (inconsistency of "type II")
+
+* `integrity.check()`, this determines whether there are integrity issues within the datasets or changes to the structure of the data
+
+Alternatively we provide a `data.checks()` function that will run both functions on an specified dataset.
+
+#### Data Integrity
+It is highly unlikely that you would face a situation where the internal structure of the data, or its actual integrity may be compromised but if you think that this is the case or the `integrity.check()` function reports this, please we urge you to contact the developer of this package (https://github.com/mponce0/covid19.analytics/issues).
+
+#### Data Consistency
+Data consistency issues and/or anomalies in the data have been reported several times, see https://github.com/CSSEGISandData/COVID-19/issues/.
+These are claimed, in most of the cases, to be missreported data and usually are just an insignificant number of the total cases.
+Having said that, we believe that the user should be aware of these situations and we recommend using the `consistency.check()` function to verify the dataset you will be working with.
+
+
 ### covid19-Sequencing data
-The `covid19.genomic.data()` allows users to obtain the covid19's genomic sequencing data from NCBI [2].
+The `covid19.genomic.data()` allows users to obtain the covid19's genomic sequencing data from NCBI [3].
 
 
 ### Analytical & Graphical Indicators
@@ -153,12 +221,41 @@ and daily changes in the reported number of cases.
     <td> obtain live* worldwide data for covid19 virus, from the JHU's CCSE repository [1] </td>
     <td> return dataframes/list with the collected data </td>
   </tr>
- <tr>
+   <tr>
+    <td> <code>covid19.Toronto.data</code> </td>
+    <td> obtain live* data for covid19 cases in the city of Toronto, ON Canada, from the City of Toronto reports [2] </td>
+    <td> return dataframe/list with the collected data </td>
+  </tr>
+   <tr>
+    <td> <code>covid19.US.data</code> </td>
+    <td> obtain live* US specific data for covid19 virus, from the JHU's CCSE repository [1] </td>
+    <td> return dataframe with the collected data </td>
+  </tr>
+
+<tr>
   <td> <code>covid19.genomic.data</code> </td>
-  <td> obtain covid19's genomic sequencing data from NCBI [2] </td>
+  <td> obtain covid19's genomic sequencing data from NCBI [3] </td>
   <td> list, with the RNA seq data in the <code>"$NC_045512.2"</code> entry </td>
  </tr>
+   <tr>
+   <th colspan="3"> <b>Data Quality Assessment</b> </th>
+  </tr>
   <tr>
+    <td> <code>data.checks</code> </td>
+    <td> run integrity and consistency checks on a given dataset </td>
+    <td> diagnostics about the dataset integrity and consistency </td>
+  </tr>
+  <tr>
+    <td> <code>consistency.check</code> </td>
+    <td> run consistency checks on a given dataset </td>
+    <td> diagnostics about the dataset consistency </td>
+  </tr>
+  <tr>
+    <td> <code>integrity.check</code> </td>
+    <td> run integrity checks on a given dataset </td>
+    <td> diagnostics about the dataset integrity </td>
+  </tr>
+ <tr>
    <th colspan="3"> <b>Analysis</b> </th>
   </tr>
   <tr>
@@ -177,12 +274,22 @@ and daily changes in the reported number of cases.
    <td> static plots: data + models (linear,Poisson,Exp), mosaic and histograms when more than one location are selected </td>
   </tr>
   <tr>
+   <td> <code>single.trend</code> <br> <code>mtrends</code> </td>
+   <td> visualize different indicators of the "trends" in daily changes for a single or mutliple locations </td>
+   <td> compose of static plots: total number of cases vs time, daily changes vs total changes in different representations</td>
+  </tr>
+ <tr>
    <th colspan="3">Graphics and Visualization</th>
  </tr>
   <tr>
    <td> <code>total.plts</code> </td>
    <td> plots in a static and interactive plot total number of cases per day, the user can specify multiple locations or global totoals </td>
    <td> static and interactive plot </td>
+ </tr>
+   <tr>
+   <td> <code>itrends</code> </td>
+   <td> generates an interactive plot of daily changes vs total changes in a log-log plot, for the indicated regions </td>
+   <td> interactive plot </td>
  </tr>
   <tr>
    <td> <code>live.map</code> </td>
@@ -214,6 +321,10 @@ The `report.summary()` generates an overall report summarizing the different dat
 It can summarize the "Time Series" data (`cases.to.process="TS"`), the "aggregated" data (`cases.to.process="AGG"`) or both (`cases.to.process="ALL"`).
 It will display the top 10 entries in each category, or the number indicated in the `Nentries` argument, for displaying all the records set `Nentries=0`.
 
+The function can also target specific geographical location(s) using the `geo.loc` argument.
+When a geographical location is indicated, the report will include an additional "Rel.Perc" column for the confirmed cases indicating the *relative* percentage among the locations indicated.
+Similarly the totals displayed at the end of the report will be for the selected locations.
+
 In each case ("TS" or/and "AGG") will present tables ordered by the different cases included, i.e.
 confirmed infected, deaths, recovered and active cases.
 
@@ -225,59 +336,99 @@ It will also compute the totals, averages, standard deviations and percentages o
 
 * Percentages: percentages are computed as follow:
   - for the "Confirmed" cases, as the ratio between the corresponding number of cases and the total number of cases, i.e. a sort of *"global percentage"* indicating the percentage of infected cases wrt the rest of the world
+  - for "Confirmed" cases, when geographical locations are specified, a *"Relative percentage"* is given as the ratio of the confirmed cases over the total of the selected locations
+  
   - for the other categories, "Deaths"/"Recovered"/"Active", the percentage of a given category is computed as the ratio between the number of cases in the corresponding category divided by the "Confirmed" number of cases, i.e. a *relative percentage* with respect to the number of confirmed infected cases in the given region
 
 * For "Time Series" data:
- - it will show the *delta* (change or variation) in the last day, and when possible will also display the percentage of "Recovered" and "Deaths" with respect to the "Confirmed" number of cases
- - The column "GlobalPerc" is computed as the ratio between the number of cases for a given country over the total of cases reported
- - The *"Global Perc. Average (SD: standard deviation)"* is computed as the average (standard deviation) of the number of cases among all the records in the data
- - The *"Global Perc. Average (SD: standard deviation) in top X"* is computed as the average (standard deviation) of the number of cases among the top *X* records
+  - it will show the *delta* (change or variation) in the last day, daily changes day before that (t-2), three days ago (t-3), a week ago (t-7), two weeks ago (t-14) and a month ago (t-30)
+  - when possible, it will also display the percentage of "Recovered" and "Deaths" with respect to the "Confirmed" number of cases
+  - The column "GlobalPerc" is computed as the ratio between the number of cases for a given country over the total of cases reported
+  - The *"Global Perc. Average (SD: standard deviation)"* is computed as the average (standard deviation) of the number of cases among all the records in the data
+  - The *"Global Perc. Average (SD: standard deviation) in top X"* is computed as the average (standard deviation) of the number of cases among the top *X* records
 
 
 Typical structure of a `summary.report()` output for the Time Series data:
 ```
-############################################################################### 
-  ##### TS-CONFIRMED Cases  -- Data dated:  2020-04-04  ::  2020-04-05 17:27:17 
 ################################################################################ 
-  Number of Countries/Regions reported:  181 
-  Number of Cities/Provinces reported:  82 
-  Unique number of geographical locations combined: 259 
+  ##### TS-CONFIRMED Cases  -- Data dated:  2020-04-12  ::  2020-04-13 12:02:27 
+################################################################################ 
+  Number of Countries/Regions reported:  185 
+  Number of Cities/Provinces reported:  83 
+  Unique number of geographical locations combined: 264 
 -------------------------------------------------------------------------------- 
-  Worldwide  ts-confirmed  Totals: 1197405 
+  Worldwide  ts-confirmed  Totals: 1846679 
 -------------------------------------------------------------------------------- 
-    Country.Region Province.State Totals GlobalPerc LastDayChange
-1             US                308850      25.79         33264
-2          Spain                126168      10.54          6969
-3          Italy                124632      10.41          4805
-4        Germany                 96092       8.03          4933
--------------------------------------------------------------------------------- 
-  Global Perc. Average:  0.39 (sd: 2.02) 
-  Global Perc. Average in top  10 :  7.98 (sd: 7) 
--------------------------------------------------------------------------------- 
+   Country.Region Province.State Totals GlobalPerc LastDayChange   t-2   t-3   t-7  t-14 t-30
+1              US                555313      30.07         28917 29861 35098 29595 20922  548
+2           Spain                166831       9.03          3804  4754  5051  5029  7846 1159
+3           Italy                156363       8.47          4092  4694  3951  3599  4050 3497
+4          France                132591       7.18          2937  4785  7120  5171  4376  808
+5         Germany                127854       6.92          2946  2737  3990  3251  4790  910
 .
 .
 .
+-------------------------------------------------------------------------------- 
+  Global Perc. Average:  0.38 (sd: 2.13) 
+  Global Perc. Average in top  10 :  7.85 (sd: 8.18) 
+-------------------------------------------------------------------------------- 
+
+******************************************************************************** 
+********************************  OVERALL SUMMARY******************************** 
+******************************************************************************** 
+  ****  Time Series TOTS **** 
+  	 ts-confirmed	 ts-deaths	 ts-recovered 
+  	 1846679	      114091	    421722 
+               			6.18% 		   22.84% 
+  ****  Time Series AVGS **** 
+  	 ts-confirmed	 ts-deaths	 ts-recovered 
+  	 6995	         432.16	    1686.89 
+  			             6.18% 		   24.12% 
+  ****  Time Series SDS **** 
+  	 ts-confirmed	 ts-deaths	 ts-recovered 
+  	 39320.05	     2399.5	    8088.55 
+  			             6.1% 		    20.57% 
+
+ * Statistical estimators computed considering 250 independent reported entries 
+******************************************************************************** 
 ```
 
 Typical structure of a `summary.report()` output for the *Aggregated* data:
 ```
-########################################################################################################################## 
-  ##### AGGREGATED Data  -- ORDERED BY  CONFIRMED Cases  -- Data dated:  2020-04-04  ::  2020-04-05 17:27:19 
-########################################################################################################################## 
-  Number of Countries/Regions reported: 181 
-  Number of Cities/Provinces reported: 137 
-  Unique number of geographical locations combined: 316 
--------------------------------------------------------------------------------------------------------------------------- 
-     Country_Region Province_State Confirmed Perc.Confirmed Deaths Perc.Deaths Recovered Perc.Recovered Active Perc.Active
-1          Spain                   126168          10.54  11947        9.47     34219          27.12  80002       63.41
-2          Italy                   124632          10.41  15362       12.33     20996          16.85  88274       70.83
-3        Germany                    96092           8.03   1444        1.50     26400          27.47  68248       71.02
+################################################################################################################################# 
+  ##### AGGREGATED Data  -- ORDERED BY  CONFIRMED Cases  -- Data dated:  2020-04-12  ::  2020-04-13 12:02:29 
+################################################################################################################################# 
+  Number of Countries/Regions reported: 185 
+  Number of Cities/Provinces reported: 138 
+  Unique number of geographical locations combined: 2989 
+--------------------------------------------------------------------------------------------------------------------------------- 
+                      Location Confirmed Perc.Confirmed Deaths Perc.Deaths Recovered Perc.Recovered Active Perc.Active
+1                        Spain    166831           9.03  17209       10.32     62391          37.40  87231       52.29
+2                        Italy    156363           8.47  19899       12.73     34211          21.88 102253       65.39
+3                       France    132591           7.18  14393       10.86     27186          20.50  91012       68.64
+4                      Germany    127854           6.92   3022        2.36     60300          47.16  64532       50.47
+5  New York City, New York, US    103208           5.59   6898        6.68         0           0.00  96310       93.32
 .
 .
 .
+=================================================================================================================================
+  	 Confirmed	 Deaths	  Recovered 	Active 
+  Totals 
+  	 1846680  	 114090	  421722    	1310868 
+  Average 
+  	 617.83	    38.17.  	141.09    	438.56 
+  Standard Deviation 
+  	 6426.31	   613.69	  2381.22 	  4272.19 
+  
+ * Statistical estimators computed considering 2989 independent reported entries
 ```
 
-A full example of this report for today can be seen <a href="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.txt" target="_blank">here</a> (updated twice a day, daily).
+In both cases an overall summary of the reported cases is presented by the end, displaying totals, average and standard devitation of the computed quantities.
+
+A full example of this report for today can be seen 
+ <a href="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.txt" target="_blank">here</a>
+<!--<a href="https://github.com/mponce0/covid19.reports/blob/master/reports/covid19-SummaryReport.txt" target="_blank">here</a>-->
+(updated twice a day, daily).
 
 In addition to this, the function will also generate some graphical outputs, including pie and bar charts representing the top regions in each category.
 
@@ -320,6 +471,26 @@ When the function is run with multiple locations or all the locations, the figur
 In addition to that, when there is more than one location the function will also generate two different styles of heatmaps comparing the changes per day and growth rate among the different locations (vertical axis) and time (horizontal axis).
 
 The function will return a list combining the results for the "changes per day" and the "growth rate" as a function of time.
+
+
+#### Trends in Daily Changes
+We provide three different functions to visualize the *trends* in daily changes of reported cases from time series data.
+
+* <code>single.trend</code>, allows to inspect one single location, this could be used with the worldwide data sliced by the corresponding location, the Toronto data or the user's own data formatted as "Time Series" data.
+
+* <code>mtrends</code>, similar to single.trend function, but accepts multiple or single locations generating one plot per location requested
+
+* <code>itrends</code>, function to generate an interactive plot of the trend in daily changes representing changes in number of cases vs total number of cases in log-scale using **splines** techniques to smooth the abrupt variations in the data
+
+
+The first two functions will generate "static" plots in a compose with different insets:
+- the main plot represents daily changes as a function of time
+- the inset figures in the top, from left to right:
+   - total number of cases (in linear and semi-log scales),
+   - changes in number of cases vs total number of cases
+   - changes in number of cases vs total number of cases in log-scale
+- the second row of insets, represent the "growth rate" (as defined above) and the "normalized" growth rate defined as the growth rate divided by the maximum growth rate reported for this location
+
 
 
 #### Plotting Totals
@@ -420,13 +591,25 @@ report.summary()
 report.summary(saveReport=TRUE)
 ```
 
-<object data="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.pdf" type="application/pdf" width="650px" height="500px">
+<object data="man/figures/covid19-SummaryReport.pdf" type="application/pdf" width="100%" height="500px">
  <embed src="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.pdf">
- <p>
-  E.g. today's report is available <a href="https://github.com/mponce0/covid19.analytics/tree/master/man/figures/covid19-SummaryReport.txt">here</a> 
+ <p> 
+  E.g. today's report is available <a href="https://github.com/mponce0/covid19.analytics/blob/master/man/figures/covid19-SummaryReport.txt">here</a> 
  </p>
  </embed>
 </object>
+
+```R
+# summary report for an specific location with default number of entries
+report.summary(geo.loc="Canada")
+
+# summary report for an specific location with top 5
+report.summary(Nentries=5, geo.loc="Canada")
+
+# it can combine several locations
+report.summary(Nentries=30, geo.loc=c("Canada","US","Italy","Uruguay","Argentina"))
+```
+
 
 
 #### Totals per Country/Region/Province
@@ -572,6 +755,40 @@ growth.rate(TSconfirmed,geo.loc=c("Hubei","Italy","Spain","US","Canada","Ontario
 </p>
 
 
+#### Trends
+```R
+# single location trend, in this case using data from the City of Tornto
+tor.data <- covid19.Toronto.data()
+single.trend(tor.data) 
+
+# or data from the province of Ontario
+ts.data <- covid19.data("ts-confirmed")
+ont.data <- ts.data[ ts.data$Province.State == "Ontario",]
+single.trend(ont.data)
+
+# or from Italy
+single.trend(ts.data[ ts.data$Country.Region=="Italy",])
+
+
+# multiple locations
+ts.data <- covid19.data("ts-confirmed")
+mtrends(ts.data, geo.loc=c("Canada","Ontario","Uruguay","Italy")
+
+# interactive plot of trends
+# for all locations and all type of cases
+itrends(covid19.data("ts-ALL"),geo.loc="ALL")
+
+# or just for confirmed cases and some specific locations, saving the result in an HTML file named "itrends_ex.html"
+itrends(covid19.data("ts-confirmed"), geo.loc=c("Uruguay","Argentina","Ontario","US","Italy","Hubei"), fileName="itrends_ex")
+```
+
+<p>
+  <img src="man/figures/trendTor.pdf" width="40%" />
+  <object data="man/figures/itrends_ex.html" width="58.5%" height="525"></object>
+</p>
+
+
+
 #### Visualization Tools
 ```R
 # retrieve time series data
@@ -657,7 +874,10 @@ plt.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.mo
 Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)
 https://github.com/CSSEGISandData/COVID-19
 
-[2] Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome
+[2] COVID-19: Status of Cases in Toronto -- City of Toronto
+https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/
+
+[3] Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome
 NCBI Reference Sequence: NC_045512.2
 https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2
 
@@ -666,6 +886,27 @@ Complexity of the Basic Reproduction Number (R0).
 Emerg Infect Dis. 2019;25(1):1-4.
 https://dx.doi.org/10.3201/eid2501.171901
 https://wwwnc.cdc.gov/eid/article/25/1/17-1901_article
+
+### How to Cite this Package
+```R
+> citation("covid19.analytics")
+
+To cite package ‘covid19.analytics’ in publications use:
+
+  Marcelo Ponce (2020). covid19.analytics: Load and Analyze Live Data
+  from the CoViD-19 Pandemic. R package version 1.1.
+  https://CRAN.R-project.org/package=covid19.analytics
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {covid19.analytics: Load and Analyze Live Data from the CoViD-19 Pandemic},
+    author = {Marcelo Ponce},
+    year = {2020},
+    note = {R package version 1.1},
+    url = {https://CRAN.R-project.org/package=covid19.analytics},
+  }
+```
 
 
 ## Further Resources

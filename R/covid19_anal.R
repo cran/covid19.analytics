@@ -1,4 +1,4 @@
-# Analysis fns of the covid19 package
+# Analysis fns of the covid19.analytics package
 #
 # M.Ponce
 
@@ -300,14 +300,16 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 		plot(x.dates,log1p(changes), ylab='',xlab='', main=paste(i,info), type='b', pch=8, cex=.3, col=my.cols, lwd=2, lty=1, axes=FALSE)
 		axis(4)
 		par(new=FALSE)
-
 		# check to see if there is enough data to display gr.rate
 		if (sum(changes==0) < length(changes)-1) {
+			# mask for avoiding blowing-up the plots and set the yMaximum value
+			mask <- (!is.infinite(gr.rate) & !is.nan(gr.rate) & !is.na(gr.rate))
+			yMax <- max(gr.rate[mask],na.rm=TRUE)
 			plot(x.dates,unlist(gr.rate),
-				axes=FALSE, xlab='',ylab='', ylim=c(0,max(gr.rate,na.rm=TRUE)*1.05),
+				axes=FALSE, xlab='',ylab='', ylim=c(0,yMax*1.05),	#max(gr.rate,na.rm=TRUE)*1.05),
 				main=paste(i,info), type='b', col=my.cols)
 			par(new=TRUE)
-			barplot(unlist(gr.rate), ylab="Growth Rate",xlab="time",col = my.cols)
+			barplot(unlist(gr.rate), ylab="Growth Rate",xlab="time",col = my.cols, ylim=c(0,yMax*1.05))
 			axis(side=1,labels=FALSE)
 			#axis.Date(side=1,x.dates)
 			#box()
@@ -389,7 +391,7 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 
         ######################
 
-        intro.header <- function(i, data,colN,country.col,province.col, scr.len=80) {
+        intro.header <- function(i, data,colN,country.col,province.col, geo.loc=NULL, scr.len=80) {
 
                 header("#", total.len=scr.len)
                 report.title <- paste(toupper(i),"Cases  -- Data dated: ",names(data)[colN]," :: ",as.character(Sys.time()))
@@ -400,11 +402,16 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
                 province.col <- pmatch("Province", names(data))
                 header('',paste("Number of Countries/Regions reported: ",length(unique(data[,country.col]))) )
                 header('',paste("Number of Cities/Provinces reported: ",length(unique(data[,province.col]))) )
-                header('',paste0("Unique number of geographical locations combined: ",nrow(unique(data[,c(country.col,province.col)]))))
+                header('',paste0("Unique number of distinct geographical locations combined: ",nrow(unique(data[,c(country.col,province.col)]))))
                 header("-", total.len=scr.len)
 
 		if (length(colN)==1) {
-			header('',paste("Worldwide ",i," Totals:", sum(data[,colN],na.rm=TRUE)))
+			if (is.null(geo.loc)) {
+				locn <-"Worldwide" 
+			} else {
+				locn <- "For selected locations"
+			}
+			header('',paste(locn,i," Totals:", sum(data[,colN],na.rm=TRUE)))
 			#header('',paste(Nentries," Top Totals:", sum(data[,colN],na.rm=TRUE)))
 			header('-', total.len=scr.len)
 		} else {
@@ -456,15 +463,17 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 			#header('-')
 		}
 
-		if (!is.na(totEntries))
-			header('',paste('\n\n',"* Statistical estimators computed considering",totEntries,"independent reported entries"))
+		if (length(totEntries)>1 || !is.na(totEntries))
+			header('',paste('\n\n',"* Statistical estimators computed considering",
+					paste(totEntries,collapse="/"),
+					"independent reported entries per case-type"))
 
 		header('*')
 	}
 
 #############################################################################
 #############################################################################
-process.agg.cases <- function(data, Nentries, graphical.output) {
+process.agg.cases <- function(data, Nentries, geo.loc=NULL, graphical.output) {
 
 	#######
 
@@ -505,6 +514,17 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 	# if Nentries i set to 0, will consider *all* entries                
 	if (Nentries==0) Nentries <- nRecords
 
+	data0 <- data
+
+	# allowing to report by selected location
+	if (!is.null(geo.loc)) {
+		# check the location indicated
+		geo.loc <- checkGeoLoc(data,geo.loc)
+		data <- select.per.loc(data,geo.loc)
+		Nentries <- min(Nentries,nrow(data))
+	}
+	###
+
 	cases <- c("Confirmed","Deaths","Recovered","Active")
 	for (i in col.cases) {
 
@@ -517,7 +537,7 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 
 		header('',paste0("Number of Countries/Regions reported: ",length(unique(data[,country.col]))))
 		header('',paste0("Number of Cities/Provinces reported: ",length(unique(data[,province.col]))))
-		header('',paste0("Unique number of geographical locations combined: ",
+		header('',paste0("Unique number of distinct geographical locations combined: ",
 				length(unique(unlist(data[,combKey.col])))
 				#nrow(unique(data[,c(country.col,province.col)]))
 				) )
@@ -534,7 +554,10 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 			if (j != col.conf) {
 				data[,paste0("Perc.",col.names[j])]  <- round((data[,j]/data[,col.conf])*100,2)
 			} else {
-				 data[,paste0("Perc.",col.names[j])]  <- round((data[,j]/sum(data[,col.conf]))*100,2)
+				# Global Perc.
+				data[,paste0("Perc.",col.names[j])]  <- round((data[,j]/sum(data0[,col.conf]))*100,2)
+				# Relative Perc.
+				#data[,paste0("Rel.Perc.",col.names[j])]  <- round((data[,j]/sum(data[,col.conf]))*100,2)
 			}
 			cols.perc <- c(cols.perc,ncol(data))
 		}
@@ -550,6 +573,7 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 		#original.cols <- c(country.col,province.col,combKey.col)
 		data.ordered <- data[order(data[,i],decreasing=TRUE),][1:upto.record,c(original.cols, custom.list)]
 		#names(data.ordered) <- c("Country.Region","Province.State", cases)
+		names(data.ordered)[1] <- "Location"
 		row.names(data.ordered) <- 1:upto.record
 
                 print(data.ordered)
@@ -559,7 +583,8 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 		target.col <- col.names[i]
 		ord.cty.col <- pmatch("Country",names(data.ordered))
 		ord.prv.col <- pmatch("Province",names(data.ordered))
-		ord.combKey.col <- pmatch("Combined",names(data.ordered))
+		##ord.combKey.col <- pmatch("Combined",names(data.ordered))
+		ord.combKey.col <- which("Location"==names(data.ordered))
 
                 # graphics
                 if (graphical.output) {
@@ -568,7 +593,9 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
                         color.scheme <- heat.colors(Nentries)   #topo.colors(Nentries)
                                         #terrain.colors(Nentries)       #rainbow(Nentries)
 
-                        pie(na.omit(data.ordered[,target.col]),
+			filter.data <- na.omit(data.ordered[data.ordered[,target.col]>0,target.col])
+                        #pie(na.omit(data.ordered[,target.col]),
+			pie(filter.data,
                                 labels=legends,
                                 main=substr(report.title,1,floor(nchar(report.title)/2)),
                                 col=color.scheme )
@@ -603,11 +630,13 @@ process.agg.cases <- function(data, Nentries, graphical.output) {
 #########################################################################
 
 
-report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output=TRUE, saveReport=FALSE) {
+report.summary <- function(cases.to.process="ALL", Nentries=10, geo.loc=NULL,
+				graphical.output=TRUE, saveReport=FALSE) {
 #' function to summarize the current situation, will download the latest data and summarize the top provinces/cities per case 
 #'
 #' @param  cases.to.process  which data to process: "TS" --time series--, "AGG" --aggregated-- or "ALL" --time series and aggregated--
 #' @param  Nentries  number of top cases to display
+#' @param  geo.loc  geographical location to process
 #' @param  graphical.output  flag to deactivate graphical output
 #' @param  saveReport  flag to indicate whether the report should be saved in a file
 #'
@@ -651,7 +680,11 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 	# save report to a file
 	if (saveReport) {
 			fileName <- paste0("covid19-SummaryReport_",Sys.Date(),".txt")
-			sink(file=fileName,split=TRUE)
+			# sink the output to the file and console (split=T) and include messages and warnings too
+			sink(file=fileName,split=TRUE) #,type = "message")
+			#file.out <- file(fileName, open = "wt")
+			#sink(file.out, type = "message")
+			#sink(file.out, split=TRUE)
 	}
 
 	##### PROCESS TIME SERIES DATA ######
@@ -663,28 +696,51 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 	cases <- c("ts-confirmed","ts-deaths","ts-recovered")	#, "aggregated")
 
 	TS.totals <- list(tots=c(),avgs=c(),sds=c())
+	n0 <- c()
 	for (i in cases) {
 		# read data
 		data <- covid19.data(i)
 
+		# run integrity and consistency checks...
+		data.checks(data,datasetName=i,details=FALSE)
+
 		# if Nentries is set to 0, will consider *all* entries
 		if (Nentries==0) Nentriex <- nrow(data)
 
+                colN <- ncol(data)
+                nRecords <- nrow(data)
+#               if (grepl("aggregated",i))      col.Tgt <-
+
+                # get total Global for confirmed cases
+		total.global <- sum(data[,colN],na.rm=TRUE)
+
+		# reporting only for geo.loc indicated
+		if (!is.null(geo.loc)) {
+			# check the location indicated
+			geo.loc <- checkGeoLoc(data,geo.loc)
+			# selecting data and updating entries
+			data <- select.per.loc(data,geo.loc)
+			Nentriex <- min(Nentriex,nrow(data))
+		}
+		###
+
 		colN <- ncol(data)
 		nRecords <- nrow(data)
-#		if (grepl("aggregated",i))	col.Tgt <-
 
-		# get totals per case
-		TS.totals$tots <- c(TS.totals$tots, sum(data[,colN],na.rm=TRUE))
-		TS.totals$avgs <- c(TS.totals$avgs, mean(data[,colN],na.rm=TRUE))
-		TS.totals$sds <-  c(TS.totals$sds , sd(data[,colN],na.rm=TRUE))
+                # get totals per case
+                TS.totals$tots <- c(TS.totals$tots, sum(data[,colN],na.rm=TRUE))
+                TS.totals$avgs <- c(TS.totals$avgs, mean(data[,colN],na.rm=TRUE))
+                TS.totals$sds <-  c(TS.totals$sds , sd(data[,colN],na.rm=TRUE))
+                ###
+
+		n0 <- c(n0,nrow(data))
 
 		# indentify country and province columns
 		country.col <- pmatch("Country", names(data))
 		province.col <- pmatch("Province", names(data))
 
 		# display 'header'
-		report.title <- intro.header(i, data,colN,country.col,province.col)
+		report.title <- intro.header(i, data,colN,country.col,province.col, geo.loc)
 
 		# Totals per countries/cities
 		#data$Totals <- apply(data[,col1:colN],MARGIN=1,sum)
@@ -695,7 +751,11 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 			geo.list <- data[,c(country.col,province.col)]
                         total.cases <- data[,colN]
 			colsF <- (colN+1):(colN+8)
-			total.global <- sum(total.cases)
+			total.rel <- sum(total.cases)
+			if (!is.null(geo.loc)) {
+				data$RelPerc <- round((total.cases/total.rel)*100,2)
+				colsF <- (colN+1):(colN+9)
+			}
 			data$GlobalPerc <- round((total.cases/total.global)*100,2)
 		} else {
 			# check that the countries/regions match in order to compute percentages...
@@ -728,8 +788,8 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 
 		# Report Average Percentages...
 		header('-')
-		report.Avgs(data,"Perc",descr="Global Perc. Average: ")
-		report.Avgs(data.ordered,"Perc",descr=paste("Global Perc. Average in top ",Nentriex,": "))
+		report.Avgs(data,"GlobalPerc",descr="Global Perc. Average: ")
+		report.Avgs(data.ordered,"GlobalPerc",descr=paste("Global Perc. Average in top ",Nentriex,": "))
 		header('-')
 
 		header("=")
@@ -742,8 +802,7 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 
 			par(mfrow=c(1,2))
 			#par(mfrow=c(1,1))
-
-			pie(na.omit(data.ordered$Totals),
+			pie(na.omit(data.ordered$Totals[data.ordered$Totals>0]),
 				labels=legends,
 				main=substr(report.title,1,floor(nchar(report.title)/2)),
 				col=color.scheme )
@@ -755,17 +814,27 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 				main=substr(report.title,ceiling(nchar(report.title)/2),nchar(report.title)) )
 		}
 	}
+
 	}
 
 	##### PROCESS "AGREGATED" DATA  #######
 	if ( (toupper(cases.to.process)=="ALL") | (toupper(cases.to.process)=="AGG") ) {
-		process.agg.cases(covid19.data("aggregated"), Nentries, graphical.output)
+		agg.data <- covid19.data("aggregated")
+		process.agg.cases(agg.data, Nentries, geo.loc=geo.loc, graphical.output)
+
+		# report integrity and consistency checks in the data
+		integrity.check(agg.data,recommend=FALSE)
 	}
 
 
 	#### OVERALL SUMMARY
+	if (!is.null(geo.loc)) {
+		report.title <- paste("Time Series ",paste(geo.loc,collapse=','))
+	} else {
+		report.title <- "Time Series Worldwide"
+	}
 	if ( (toupper(cases.to.process)=="ALL") | (toupper(cases.to.process)=="TS") ) {
-	        report.Totals(cases,TS.totals, preTitle="Time Series",nrow(data))
+	        report.Totals(cases,TS.totals, preTitle=report.title,n0)	#nrow(data))
 	}
 
 	if (saveReport) {
@@ -780,3 +849,198 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, graphical.output
 }
 
 #############################################################################
+
+
+single.trend <- function(ts.data, confBnd=TRUE, info="") {
+#' function to visualize different indicators for trends in daily changes of cases reported as time series data
+#' 
+#' @param  ts.data  time series data
+#' @param  confBnd  optional argument to remove the drawing of a confidence band
+#' @param  info  addtional information to display in plots
+#'
+#'
+#' @importFrom  graphics  axis.Date lines mtext
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' tor.data <- covid19.Toronto.data()
+#' single.trend(tor.data) 
+#' }
+#'
+#' ts.data <- covid19.data("ts-confirmed")
+#' ont.data <- ts.data[ ts.data$Province.State == "Ontario",]
+#' single.trend(ont.data)
+#'
+#' single.trend(ts.data[ ts.data$Country.Region=="Italy",])
+
+
+        # check that the data is time series
+        chk.TS.data(ts.data,xtp=TRUE)
+
+        # first column with daily data
+        col1 <- 5
+	Ncols <- ncol(ts.data)
+
+	cty.col <- pmatch("Country",names(ts.data))
+	prv.col <- pmatch("Province",names(ts.data))
+	lat.col <- pmatch("Lat",names(ts.data))
+	lng.col <- pmatch("Long",names(ts.data))
+
+	cols.range <- col1:Ncols
+
+	if (nrow(ts.data)>1) {
+		#ts.data <- cbind(unique(as.character(ts.data[,c(cty.col)])),
+		#		paste(ts.data[,prv.col],collapse="/"),
+		#		rbind(apply(ts.data[,c(lat.col,lng.col)],MARGIN=2,mean)),
+		#		rbind(apply(ts.data[,col1:Ncols],MARGIN=2,sum)) )
+
+		#ts.data[,5:Ncols] <- as.numeric(ts.data[,5:Ncols])
+		ts.data <- apply(ts.data[,col1:Ncols],MARGIN=2,sum)
+		cols.range <- 1:length(ts.data)
+	}
+
+	xvar <- as.Date(names(ts.data)[cols.range])
+	xvar.diff <- xvar[-length(xvar)]
+	yvar  <- as.numeric(ts.data[cols.range])
+	yvar.diff <- diff(yvar,lag=1)
+
+
+	# preserve user graphical environment
+	old.par <- par(no.readonly=TRUE)
+	on.exit(par(old.par))
+
+
+	### MAIN PLOT
+	# plot diff
+	plot( xvar.diff,yvar.diff, type='b', cex=0.5,
+		#ylim=c(min(yvar.diff),1.15*max(yvar.diff)),
+		axes=FALSE, xlab="Time (dates)", ylab="Daily Changes" )
+	mtext(info,side=3,padj=0,adj=0)
+	axis.Date(1,xvar.diff)
+	axis(side=2)
+
+	if (confBnd)
+		confBand(xvar.diff,yvar.diff, 1,length(yvar.diff),0,max(yvar.diff,na.rm=TRUE), windowsNbr=10, lcolour='black',lwidth=0.75)
+
+
+	### SUBPLOTS
+	par(new=TRUE)
+	par(mfrow=c(4,4), mai = c(0.3, 0.1, 0.1, 0.3))
+	par(mfg=c(1,2))
+
+	# plot cumulative nbr of cases
+	plot(xvar,yvar, type='l', col='darkblue', xlab='',ylab='Nbr of Cases')
+#	if (confBnd)
+#		confBand(xvar,yvar, 1,length(yvar),0,max(yvar,na.rm=TRUE), windowsNbr=10, lcolour='black', lwidth=0.5)
+	par(new=TRUE)
+	plot(xvar,log1p(yvar), type='l', col='blue', lty='dotdash', axes=F, xlab='',ylab='')
+	axis(4)
+
+	# plot diff vs total nbr of cases
+	par(new=FALSE)
+	par(mfg=c(1,3))
+	plot(yvar.diff ~ yvar[-length(yvar)], type='l', lwd=0.35,  axes=F, xlab='',ylab='')
+	axis(1); axis(4)
+	if (confBnd)
+		confBand(yvar[-length(yvar)],yvar.diff, 1,length(yvar.diff),0,max(yvar.diff,na.rm=TRUE), windowsNbr=10, lcolour='black',lwidth=0.75)
+
+	### 
+	plot( log1p(yvar.diff) ~ log1p(yvar[-length(yvar)]),
+			type='p', cex=0.35, pch=20, lwd=.25,  axes=F, xlab='',ylab='',
+			xlim=c(0,max(log1p(yvar),log1p(yvar.diff), na.rm=TRUE)) ,
+			ylim=c(0,max(log1p(yvar),log1p(yvar.diff), na.rm=TRUE))	)
+	lines(log1p(yvar.diff) ~ log1p(yvar[-length(yvar)]), lwd=.25)
+	confBand(log1p(yvar[-length(yvar)]),log1p(yvar.diff), .1,length(yvar.diff),0,max(log1p(yvar.diff),na.rm=TRUE), windowsNbr=10, lcolour='black',lwidth=.75)
+	abline(0,1, lty=4)
+	axis(side=1); axis(side=4)
+
+	# GROWTH RATE
+	par(mfg=c(2,2))
+	gr.rate <- (yvar.diff[2:length(yvar.diff)]/yvar.diff[1:(length(yvar.diff)-1)])
+	#plot(xvar.diff,gr.rate, type='l', ylab="Growth rate", lwd=0.75)
+	#confBand(xvar.diff,gr.rate, .5,length(gr.rate),0,max(gr.rate,na.rm=TRUE), windowsNbr=10, lcolour='black')
+	par(mfrow=c(6,4), mai=c(0,0,0,0))
+	par(mfg=c(3,2))
+	mask.data <- which(!is.nan(gr.rate) & !is.infinite(gr.rate) & gr.rate>0)
+	gr.rate <- gr.rate[mask.data]
+
+	# will draw plots if there is enough data points...
+	if (length(gr.rate)>1) {
+		barplot(gr.rate)
+		#axis.Date(1,xvar.diff)
+
+	# Normalized growth rate
+		par(mfrow=c(15,4), mai=c(0,0,0,0))
+		par(mfg=c(5,2))
+		norm.gr.rate <- gr.rate/max(gr.rate)
+
+		norm.gr.rate <- (norm.gr.rate)
+		plot(xvar.diff[mask.data],norm.gr.rate, axes=FALSE, type='s', lwd=.3)
+		#axis.Date(1,xvar.diff[mask.data])
+		axis(4)
+		confBand(xvar.diff[mask.data],norm.gr.rate, .25,length(norm.gr.rate),0,max(norm.gr.rate,na.rm=TRUE), windowsNbr=15, lcolour='black',lwidth=0.75)
+	}
+}
+
+#############################################################################
+
+mtrends <- function(data, geo.loc=NULL, confBnd=TRUE, info="") {
+#' function to visualize different indicators for trends in daily changes of cases reported as time series data, for mutliple (or single) locations
+#'
+#' @param  data  data.frame with *time series* data from covid19
+#' @param  geo.loc  list of locations
+#' @param  confBnd  flag to activate/deactivate drawing of confidence bands base on a moving average window
+#' @param  info  additional info to display in the plot
+#'
+#' @export
+#'
+#' @importFrom  graphics   barplot par plot abline axis 
+#'
+#' @examples
+#' ts.data <- covid19.data("ts-confirmed")
+#' mtrends(ts.data, geo.loc=c("Canada","Ontario","Uruguay","Italy"))
+#'
+
+        # check that the data is time series
+        chk.TS.data(data,xtp=TRUE)
+
+        # check the location indicated
+        geo.loc <- checkGeoLoc(data,geo.loc)
+
+	results <- list()
+
+	# Process each case if status is present...
+        if ("status" %in% names(data)) {
+                for (i in unique(data$status) ) {
+                        message("Considering ",i, " cases")
+                        datai <- data[ data$status == i, ]
+                        datai <- datai[, ! names(data) %in% "status", drop = F]
+                        result.per.case <- mtrends(datai,geo.loc,confBnd, i)
+                        results <- list(result.per.case, results)
+                }
+                return(results)
+        }
+
+        for (i in geo.loc) {
+                # check whether the locations are countries/regions or provinces/states
+                cases.per.loc <- select.per.loc(data,i)
+
+		Country.col <- pmatch("Country", names(data))
+		Province.col <- pmatch("Province", names(data))
+
+		colN <- ncol(cases.per.loc)
+		if (tolower("status") %in% tolower(cases.per.loc))
+			colN <- colN - 1
+
+		for (j in 1:nrow(cases.per.loc)) {
+			locn <- paste(cases.per.loc[j,Country.col],cases.per.loc[j,Province.col],collapse=" ")
+			header('',paste("Processing ",locn,"..."))
+			single.trend(cases.per.loc[j,],confBnd,paste(locn,info))
+		}
+	}
+}
+
+#############################################################################
+

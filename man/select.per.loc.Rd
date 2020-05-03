@@ -4,7 +4,7 @@
 \alias{select.per.loc}
 \title{auxiliary function to select data based on geographical location}
 \usage{
-\method{select}{per.loc}(data, geo.loc)
+select.per.loc(data, geo.loc)
 }
 \arguments{
 \item{data}{data set to process}

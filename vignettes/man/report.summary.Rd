@@ -7,6 +7,7 @@
 report.summary(
   cases.to.process = "ALL",
   Nentries = 10,
+  geo.loc = NULL,
   graphical.output = TRUE,
   saveReport = FALSE
 )
@@ -15,6 +16,8 @@ report.summary(
 \item{cases.to.process}{which data to process: "TS" --time series--, "AGG" --aggregated-- or "ALL" --time series and aggregated--}
 
 \item{Nentries}{number of top cases to display}
+
+\item{geo.loc}{geographical location to process}
 
 \item{graphical.output}{flag to deactivate graphical output}
 

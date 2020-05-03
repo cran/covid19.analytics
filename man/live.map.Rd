@@ -6,8 +6,10 @@
 \usage{
 live.map(
   data = covid19.data(),
+  select.projctn = TRUE,
   projctn = "orthographic",
   title = "",
+  no.legend = FALSE,
   szRef = 0.2,
   fileName = NULL
 )
@@ -15,10 +17,14 @@ live.map(
 \arguments{
 \item{data}{data to be used}
 
+\item{select.projctn}{argument to activate or deactivate the pulldown menu for selecting the type of projection}
+
 \item{projctn}{initial type of map-projection to use, possible values are:
 "equirectangular" | "mercator" | "orthographic" | "natural earth" | "kavrayskiy7" | "miller" | "robinson" | "eckert4" | "azimuthal equal area" | "azimuthal equidistant" | "conic equal area" | "conic conformal" | "conic equidistant" | "gnomonic" | "stereographic" | "mollweide" | "hammer" | "transverse mercator" | "albers usa" | "winkel tripel" | "aitoff" | "sinusoidal"}
 
 \item{title}{a string with a title to add to the plot}
+
+\item{no.legend}{parameter to turn off or on the legend on the right with the list of countries}
 
 \item{szRef}{numerical value to use as reference, to scale up the size of the bubbles in the map, from 0 to 1 (smmaller value --> larger bubbles)}
 

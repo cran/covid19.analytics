@@ -2,7 +2,7 @@
 % Please edit documentation in R/covid19.R
 \name{covid19.data}
 \alias{covid19.data}
-\title{function to read "live" data as reported by JHU's CCSE repository}
+\title{function to read "live" data from reported covid19 cases}
 \usage{
 covid19.data(case = "aggregated", local.data = FALSE, debrief = FALSE)
 }
@@ -13,10 +13,13 @@ covid19.data(case = "aggregated", local.data = FALSE, debrief = FALSE)
 "ts-deaths"    :  time series data of fatal cases,
 "ts-recovered" :  time series data of recovered cases,
 "ts-ALL"       :  all time series data combined,
+"ts-confirmed-US"  : time series data of confirmed cases for the United States,
+"ts-deaths-US"     : time series data of fatal cases for the United States,
 "ts-dep-confirmed" : time series data of confirmed cases as originally reported (depricated),
 "ts-dep-deaths"    : time series data of deaths as originally reported (depricated),
 "ts-dep-recovered" : time series data of recovered cases as originally reported (depricated),
-"ALL": all of the above}
+"ALL": all of the above
+"ts-Toronto"       :  data for the City of Toronto, ON - Canada}
 
 \item{local.data}{boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity}
 
@@ -26,7 +29,7 @@ covid19.data(case = "aggregated", local.data = FALSE, debrief = FALSE)
 a dataframe (or a list in the case of "ALL") with the daily worlwide indicated type of data per country/region/city
 }
 \description{
-function to read "live" data as reported by JHU's CCSE repository
+function to read "live" data from reported covid19 cases
 }
 \examples{
 \donttest{
