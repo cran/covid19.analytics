@@ -11,7 +11,8 @@ totals.plt(
   log.plt = TRUE,
   with.totals = FALSE,
   interactive.fig = TRUE,
-  fileName = NULL
+  fileName = NULL,
+  interactive.display = TRUE
 )
 }
 \arguments{
@@ -25,9 +26,11 @@ totals.plt(
 
 \item{with.totals}{a boolean flag to indicate whether the totals should be displayed with the records for the specific location}
 
-\item{interactive.fig}{swith to turn off/on an interactive plot}
+\item{interactive.fig}{switch to turn off/on an interactive plot}
 
 \item{fileName}{file where to save the HTML version of the interactive figure}
+
+\item{interactive.display}{boolean argument for enabling or not displaying the interactive figure}
 }
 \description{
 function to plot total number of cases per day for different groups

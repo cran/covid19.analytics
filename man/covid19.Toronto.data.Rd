@@ -6,14 +6,21 @@
 as reported by the City of Toronto
 https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/}
 \usage{
-covid19.Toronto.data(data.fmt = "TS", local.data = FALSE, debrief = FALSE)
+covid19.Toronto.data(
+  data.fmt = "TS",
+  local.data = FALSE,
+  debrief = FALSE,
+  OLD.fmt = FALSE
+)
 }
 \arguments{
-\item{data.fmt}{"TS" for TimeSeries or "original"}
+\item{data.fmt}{"TS" for TimeSeries of cumulative cases or "original" for the data as reported in the google-document with multiple sheets}
 
 \item{local.data}{boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity}
 
 \item{debrief}{boolean specifying whether information about the read data is going to be displayed in screen}
+
+\item{OLD.fmt}{boolean flag to specify if the data is being read in an old format}
 }
 \value{
 a dataframe (or a list in the case of "original") with the latest data reported for the city of Toronto, ON - Canada

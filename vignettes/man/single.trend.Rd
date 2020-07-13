@@ -19,7 +19,7 @@ function to visualize different indicators for trends in daily changes of cases 
 \examples{
 \donttest{
 tor.data <- covid19.Toronto.data()
-single.trend(tor.data) 
+single.trend(tor.data[tor.data$status=="Active Cases",]) 
 }
 
 ts.data <- covid19.data("ts-confirmed")

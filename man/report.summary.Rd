@@ -30,7 +30,12 @@ function to summarize the current situation, will download the latest data and s
 # displaying top 10s
 report.summary()
 
+\dontrun{
 # get the top 20
-report.summary(Nentries=20)
+report.summary(Nentries=20,graphical.output=FALSE)
+
+# specify a location
+report.summary(geo.loc="NorthAmerica")
+}
 
 }

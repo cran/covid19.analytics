@@ -68,10 +68,12 @@
         add.N.traces <- function(i.fig, traces, tr.names=rep("",length(traces)), vis=TRUE) {
 
 			tr.x <- traces[,2]
-                        i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,3], name=tr.names[2], type='scatter', mode='lines+markers', visible=vis)
-			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,4], name=tr.names[3], type='scatter', mode='lines+markers', visible=vis)
-			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,5], name=tr.names[4], type='scatter', mode='lines+markers', visible=vis)
-			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,1], name=tr.names[1], type='scatter', mode='markers', visible=vis)
+                        i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,3], name=tr.names[3-1], type='scatter', mode='lines+markers', visible=vis)
+			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,4], name=tr.names[4-1], type='scatter', mode='lines+markers', visible=vis)
+			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,5], name=tr.names[5-1], type='scatter', mode='lines+markers', visible=vis)
+			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,1], name=tr.names[2-1], type='scatter', mode='markers', visible=vis)
+			# for adding the FORCE...
+			i.fig <- i.fig %>% add_trace(x=~tr.x, y = ~traces[,6], name=tr.names[6-1], type='scatter', mode='lines', visible=vis)
 
 			return(i.fig)
         }
@@ -84,7 +86,7 @@
 
 totals.plt <- function(data0=NULL, geo.loc0=NULL,
 			one.plt.per.page=FALSE, log.plt=TRUE, with.totals=FALSE,
-			interactive.fig=TRUE, fileName=NULL) {
+			interactive.fig=TRUE, fileName=NULL, interactive.display=TRUE) {
 #' function to plot total number of cases per day for different groups
 #'
 #' @param  data0  time series dataset to process, default all the possible cases: 'confirmed' and 'deaths' for all countries/regions
@@ -92,8 +94,9 @@ totals.plt <- function(data0=NULL, geo.loc0=NULL,
 #' @param  geo.loc0  geographical location, country/region or province/state to restrict the analysis to
 #' @param  log.plt  include a log scale plot in the static plot
 #' @param  with.totals  a boolean flag to indicate whether the totals should be displayed with the records for the specific location
-#' @param  interactive.fig  swith to turn off/on an interactive plot
+#' @param  interactive.fig  switch to turn off/on an interactive plot
 #' @param  fileName  file where to save the HTML version of the interactive figure
+#' @param  interactive.display  boolean argument for enabling or not displaying the interactive figure
 #'
 #' @export
 #'
@@ -464,8 +467,15 @@ n.plt <- FALSE
 		}
 	}
 
-	if (interactive.fig) print(totals.ifig)
-	#return(totals.per.cat)
+	if (interactive.display) {
+		# show interactive plot
+		print(totals.ifig)
+		# and return DF
+		return(invisible(totals.per.cat))
+	} else {
+		# return interactive plot
+		return(totals.ifig)
+	}
 }
 
 
@@ -476,7 +486,7 @@ live.map <- function(data=covid19.data(),
 			select.projctn=TRUE, projctn='orthographic',
 			title="", no.legend=FALSE,
 			szRef=0.2,
-			fileName=NULL) {
+			fileName=NULL, interactive.display=TRUE) {
 #' function to map cases in an interactive map
 #'
 #' @param  data  data to be used
@@ -487,6 +497,7 @@ live.map <- function(data=covid19.data(),
 #' @param  szRef  numerical value to use as reference, to scale up the size of the bubbles in the map, from 0 to 1 (smmaller value --> larger bubbles)
 #' @param  no.legend  parameter to turn off or on the legend on the right with the list of countries
 #' @param  fileName  file where to save the HTML version of the interactive figure
+#' @param  interactive.display  boolean argument for enabling or not displaying the figure
 #'
 #' @export
 #'
@@ -495,17 +506,18 @@ live.map <- function(data=covid19.data(),
 #' @importFrom  utils  head str
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # retrieve aggregated data
 #' data <- covid19.data("aggregated")
 #' # interactive map of aggregated cases -- with more spatial resolution
 #' live.map(data)
 # # or
 # 'live.map()
-#' }
+#' 
 #' # interactive map of the time series data of the confirmed cases
 #' # with less spatial resolution, ie. aggregated by country
 #' live.map(covid19.data("ts-confirmed"))
+#' }
 #'
 
 	# load/check plotly
@@ -788,7 +800,7 @@ live.map <- function(data=covid19.data(),
 
 
 	# force displaying the figure
-	print(fig)
+	if (interactive.display) print(fig)
 
 	if (!is.null(fileName)) {
 		FileName <- paste0(fileName,".html")
@@ -798,7 +810,7 @@ live.map <- function(data=covid19.data(),
 	}
 
 	#if (TRUE) {
-	#	return(fig)
+		return(fig)
 	#} else {
 		return(invisible(df))
 	#}

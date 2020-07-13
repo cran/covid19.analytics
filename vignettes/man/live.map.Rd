@@ -11,7 +11,8 @@ live.map(
   title = "",
   no.legend = FALSE,
   szRef = 0.2,
-  fileName = NULL
+  fileName = NULL,
+  interactive.display = TRUE
 )
 }
 \arguments{
@@ -29,19 +30,22 @@ live.map(
 \item{szRef}{numerical value to use as reference, to scale up the size of the bubbles in the map, from 0 to 1 (smmaller value --> larger bubbles)}
 
 \item{fileName}{file where to save the HTML version of the interactive figure}
+
+\item{interactive.display}{boolean argument for enabling or not displaying the figure}
 }
 \description{
 function to map cases in an interactive map
 }
 \examples{
-\donttest{
+\dontrun{
 # retrieve aggregated data
 data <- covid19.data("aggregated")
 # interactive map of aggregated cases -- with more spatial resolution
 live.map(data)
-}
+
 # interactive map of the time series data of the confirmed cases
 # with less spatial resolution, ie. aggregated by country
 live.map(covid19.data("ts-confirmed"))
+}
 
 }

@@ -188,13 +188,16 @@ tots.per.location <- function(data, geo.loc=NULL, confBnd=FALSE, nbr.plts=1, inf
 #############################################################################
 
 
-growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
+growth.rate <- function(data0, geo.loc=NULL, stride=1, info="", staticPlt=TRUE, interactiveFig=FALSE, interactive.display=TRUE) {
 #' function to compute daily changes and "Growth Rates" per location; "Growth Rates" defined as the ratio between changes in consecutive days
 #'
 #' @param  data0  data.frame with *time series* data from covid19
 #' @param  geo.loc  list of locations
 #' @param  stride  how frequently to compute the growth rate in units of days
 #' @param  info  additional information to include in plots' title
+#' @param  staticPlt  boolean flag to indicate whether static plots would be generated or not
+#' @param  interactiveFig  boolean flag to indicate whether interactice figures would be generated or not
+#' @param  interactive.display  boolean flag to indicate whether the interactive plot will be displayed (pushed) to your browser
 #'
 #' @return  a list containing two dataframes: one reporting changes on daily baisis and a second one reporting growth rates, for the indicated regions
 #'
@@ -208,7 +211,7 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 #' # read data for confirmed cases
 #' data <- covid19.data("ts-confirmed")
 #' # compute changes and growth rates per location for all the countries
-#' growth.rate(data)
+#' # growth.rate(data)
 #' # compute changes and growth rates per location for 'Italy'
 #' growth.rate(data,geo.loc="Italy")
 #' # compute changes and growth rates per location for 'Italy' and 'Germany'
@@ -250,7 +253,7 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 			message("Considering ",i, " cases")
 			data <- data0[ data0$status == i, ]
 			data <- data[, ! names(data) %in% "status", drop = F]
-			result.per.case <- growth.rate(data,geo.loc,stride, i)
+			result.per.case <- growth.rate(data,geo.loc,stride, i, staticPlt=staticPlt, interactiveFig=interactiveFig, interactive.display=interactive.display)
 			results <- list(result.per.case, results)
 		}
 		return(results)
@@ -291,6 +294,7 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 		total.changes.per.day <- rbind(total.changes.per.day, changes)
 		total.gr.per.day <- rbind(total.gr.per.day, gr.rate)
 
+		if (staticPlt) {
 		# some graphic output...		
 		my.cols <- rep(rainbow(15L),each=20L)
 		x.dates <- as.Date(names(totals.per.loc[2:length(totals.per.loc)]))
@@ -317,12 +321,10 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 		} else {
 			message("Not enough data to compute growth rate for ",i)
 		}
+		}
 	}
 
 	if ( (nrow(total.changes.per.day)>=1) && (length(geo.loc)>=1) )  {
-		# load some graphical libraries 
-		loadLibrary("pheatmap")
-		loadLibrary("gplots")
 
 		names(total.changes.per.day) <- names(changes)
 		total.changes.per.day <- cbind(geo.loc, total.changes.per.day)
@@ -330,9 +332,17 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 		names(total.gr.per.day) <- names(gr.rate)
 		total.gr.per.day <- cbind(geo.loc, total.gr.per.day)
 
+	if (staticPlt) {
+		# load some graphical libraries 
+                loadLibrary("pheatmap")
+                loadLibrary("gplots")
+
 		par(mfrow=c(1,2))
 		if (nrow(total.changes.per.day) > 1) {
 			mat.tgt <- (as.matrix(total.changes.per.day[,2:length(changes)]))
+			# deal with NA/nan/... setting to 0
+			mat.tgt[is.na(mat.tgt)] <- 0
+
 			# Heatmap.2
 			heatmap.2(mat.tgt,
 				dendrogram="none", trace='none',
@@ -359,7 +369,12 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 		}
 
 		if (nrow(total.gr.per.day) > 1) {
-			mst.tgt <- (as.matrix(total.gr.per.day[,2:length(gr.rate)]))
+			mat.tgt <- (as.matrix(total.gr.per.day[,2:length(gr.rate)]))
+			#mat.tgt <-  mat.tgt[,which(unlist(lapply(mat.tgt, function(x) !all(is.na(x)))))]
+			#mat.tgt <-  mat.tgt[,which(unlist(lapply(mat.tgt, function(x) !all(is.nan(x)))))]
+			# deal with NA/nan/... setting to 0
+			mat.tgt[is.na(mat.tgt)] <- 0
+
 			heatmap.2(mat.tgt,
 				dendrogram="none", trace='none',
 				col=bluered, labRow=geo.loc,
@@ -380,7 +395,34 @@ growth.rate <- function(data0, geo.loc=NULL, stride=1, info="") {
 			#	col = rainbow(256) )
 		}
 	}
+}
+	if (interactiveFig) {
+		loadLibrary("plotly")
+		p1 <- plot_ly(z=t(total.changes.per.day),x=total.changes.per.day['geo.loc'][[1]],y=names(total.changes.per.day), type='surface', scene='scene1')
+		p2 <- plot_ly(z=t(total.changes.per.day),x=total.changes.per.day['geo.loc'][[1]],y=names(total.changes.per.day), type='heatmap')
+		p3 <- plot_ly(z=t(total.gr.per.day), x=total.gr.per.day['geo.loc'][[1]], y=names(total.changes.per.day)[-1], type='heatmap')
+		#p3 <- layout(p3, scene = list(zaxis = list(title = "Growth Rate", range = c(-4,4)), yaxis = list(title = "B"), xaxis = list(title = "C")))
+		if (interactive.display) {
+					print(p1)
+					print(p2)
+					print(p3)
+		} else {
+			# compose one plot
 
+			ifig <- subplot(p2, p1, p3)#, widths=c(0.3,0.4,0,.3), ncols=3)
+			ifig <- ifig %>% layout(title = "Daily Changes & Growth Rate",
+         			scene1 = list(domain=list(x=c(0,0.5),y=c(0.75,1)),
+                      				aspectmode='cube')
+				#scene2 = list(domain=list(x=c(0,0.5),y=c(0,0.5)),
+ 		                #     aspectmode='data'),
+				#scene3 = list(domain=list(x=c(0.5,1),y=c(0,0.5)),
+				#	aspectmode='data')
+					)
+
+			#ifig <- subplot(list(subplot(p1,p2),p3), nrows = 3)#, shareX = FALSE, titleX = TRUE)
+			return(ifig)
+		}
+	}
 	return(list(Changes=total.changes.per.day,Growth.Rate=total.gr.per.day))
 }
 
@@ -650,8 +692,13 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, geo.loc=NULL,
 #' # displaying top 10s
 #' report.summary()
 #'
+#' \dontrun{
 #' # get the top 20
-#' report.summary(Nentries=20)
+#' report.summary(Nentries=20,graphical.output=FALSE)
+#'
+#' # specify a location
+#' report.summary(geo.loc="NorthAmerica")
+#' }
 #'
 
 	# reassign Nentries to Nentriex
@@ -864,9 +911,9 @@ single.trend <- function(ts.data, confBnd=TRUE, info="") {
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' tor.data <- covid19.Toronto.data()
-#' single.trend(tor.data) 
+#' single.trend(tor.data[tor.data$status=="Active Cases",]) 
 #' }
 #'
 #' ts.data <- covid19.data("ts-confirmed")

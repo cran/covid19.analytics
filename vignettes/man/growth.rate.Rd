@@ -4,7 +4,15 @@
 \alias{growth.rate}
 \title{function to compute daily changes and "Growth Rates" per location; "Growth Rates" defined as the ratio between changes in consecutive days}
 \usage{
-growth.rate(data0, geo.loc = NULL, stride = 1, info = "")
+growth.rate(
+  data0,
+  geo.loc = NULL,
+  stride = 1,
+  info = "",
+  staticPlt = TRUE,
+  interactiveFig = FALSE,
+  interactive.display = TRUE
+)
 }
 \arguments{
 \item{data0}{data.frame with *time series* data from covid19}
@@ -14,6 +22,12 @@ growth.rate(data0, geo.loc = NULL, stride = 1, info = "")
 \item{stride}{how frequently to compute the growth rate in units of days}
 
 \item{info}{additional information to include in plots' title}
+
+\item{staticPlt}{boolean flag to indicate whether static plots would be generated or not}
+
+\item{interactiveFig}{boolean flag to indicate whether interactice figures would be generated or not}
+
+\item{interactive.display}{boolean flag to indicate whether the interactive plot will be displayed (pushed) to your browser}
 }
 \value{
 a list containing two dataframes: one reporting changes on daily baisis and a second one reporting growth rates, for the indicated regions
@@ -26,7 +40,7 @@ function to compute daily changes and "Growth Rates" per location; "Growth Rates
 # read data for confirmed cases
 data <- covid19.data("ts-confirmed")
 # compute changes and growth rates per location for all the countries
-growth.rate(data)
+# growth.rate(data)
 # compute changes and growth rates per location for 'Italy'
 growth.rate(data,geo.loc="Italy")
 # compute changes and growth rates per location for 'Italy' and 'Germany'

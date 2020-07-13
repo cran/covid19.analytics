@@ -14,7 +14,8 @@ generate.SIR.model(
   fatality.rate = 0.02,
   tot.population = 1.4e+09,
   staticPlt = TRUE,
-  interactiveFig = FALSE
+  interactiveFig = FALSE,
+  add.extras = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ generate.SIR.model(
 \item{staticPlt}{optional flag to activate/deactive plotting of the data and the SIR model generated}
 
 \item{interactiveFig}{optional flag to activate/deactive the generation of an interactive plot of the data and the SIR model generated}
+
+\item{add.extras}{boolean flag to add extra indicators, such as, the "force of infection" and time derivatives}
 }
 \description{
 function to generate a simple SIR (Susceptible-Infected-Recovered) model based on the actual data of the coivd19 cases
@@ -46,6 +49,6 @@ data <- covid19.data("ts-confirmed")
 generate.SIR.model(data,"Hubei", t0=1,t1=15)
 generate.SIR.model(data,"Germany",tot.population=83149300)
 generate.SIR.model(data,"Uruguay", tot.population=3500000)
-generate.SIR.model(data,"Canada", tot.population=37590000)
+generate.SIR.model(data,"Canada", tot.population=37590000, add.extras=TRUE)
 
 }

@@ -99,7 +99,7 @@ generate.SIR.model <- function(data=NULL, geo.loc="Hubei",
 				tfinal=90,
 				fatality.rate = 0.02,
 				tot.population=1400000000,
-				staticPlt=TRUE, interactiveFig=FALSE) {
+				staticPlt=TRUE, interactiveFig=FALSE, add.extras=FALSE) {
 #' function to generate a simple SIR (Susceptible-Infected-Recovered) model based on the actual data of the coivd19 cases
 #'
 #' @param  data  time series dataset to consider
@@ -112,6 +112,7 @@ generate.SIR.model <- function(data=NULL, geo.loc="Hubei",
 #' @param  tot.population  total population of the country/region
 #' @param  staticPlt  optional flag to activate/deactive plotting of the data and the SIR model generated
 #' @param  interactiveFig  optional flag to activate/deactive the generation of an interactive plot of the data and the SIR model generated
+#' @param  add.extras  boolean flag to add extra indicators, such as, the "force of infection" and time derivatives
 #'
 #' @importFrom  stats  optim setNames
 #' @importFrom  deSolve  ode
@@ -123,7 +124,7 @@ generate.SIR.model <- function(data=NULL, geo.loc="Hubei",
 #' generate.SIR.model(data,"Hubei", t0=1,t1=15)
 #' generate.SIR.model(data,"Germany",tot.population=83149300)
 #' generate.SIR.model(data,"Uruguay", tot.population=3500000)
-#' generate.SIR.model(data,"Canada", tot.population=37590000)
+#' generate.SIR.model(data,"Canada", tot.population=37590000, add.extras=TRUE)
 #'
 
 	# DISCLAIMER // EXPERIMENTAL FEATURES
@@ -266,7 +267,7 @@ generate.SIR.model <- function(data=NULL, geo.loc="Hubei",
 	# height of pandemic
 	max.I <- max(fit$I)
 	max.I.time <- fit$time[fit$I==max.I]
-	header("",paste("Max of infecteded:", round(max.I,2), " (",round((max.I/tot.population)*100,2),"%)"))
+	header("",paste("Max nbr of infected:", round(max.I,2), " (",round((max.I/tot.population)*100,2),"%)"))
 	#print(fit[fit$I == max(fit$I), "I", drop = FALSE]) 
 
 
@@ -278,11 +279,11 @@ generate.SIR.model <- function(data=NULL, geo.loc="Hubei",
 	header("=")
 
 	# group fit and data in an object to be returned
-	SIR.model <- list(Infected=Infected, model=fit)
+	SIR.model <- list(Infected=Infected, model=fit, params=list(beta=Opt_par["beta"],gamma=Opt_par["gamma"],R0=R0))
 
 	# display plots if requested
 	if (staticPlt | interactiveFig)
-		plt.SIR.model(SIR.model,geo.loc, interactiveFig)
+		plt.SIR.model(SIR.model,geo.loc, interactiveFig, add.extras=add.extras)
 
 	#class(SIR.model) <- "SIR.model"
 	return(SIR.model)
@@ -291,18 +292,22 @@ generate.SIR.model <- function(data=NULL, geo.loc="Hubei",
 #######################################################################
 #######################################################################
 
-plt.SIR.model <- function(SIR.model, geo.loc="", interactiveFig=FALSE, fileName=NULL) {
+plt.SIR.model <- function(SIR.model, geo.loc="",
+				interactiveFig=FALSE, fileName=NULL, interactive.display=TRUE,
+				add.extras=TRUE) {
 #' function to plot the results from the SIR model fn
 #'
 #' @param  SIR.model model resulting from the generate.SIR.model() fn
 #' @param  geo.loc  optional string to specify geographical location
 #' @param  interactiveFig  optional flag to activate interactive plot
 #' @param  fileName  file where to save the HTML version of the interactive figure
+#' @param  interactive.display  boolean flag to indicate whether the interactive plot will be displayed (pushed) to your browser
+#' @param  add.extras  boolean flag to add extra indicators, such as, the "force of infection" and time derivatives
 #'
-#' @export plt.SIR.model 
+#' @export plt.SIR.model
 #'
-#' @importFrom  graphics  matplot title legend points
-#' @importFrom  plotly  plot_ly %>% add_trace as_widget
+#' @importFrom  graphics  matplot matlines title legend points
+#' @importFrom  plotly  plot_ly %>% add_trace as_widget subplot
 #' @importFrom  htmlwidgets  saveWidget
 #'
 
@@ -323,14 +328,25 @@ plt.SIR.model <- function(SIR.model, geo.loc="", interactiveFig=FALSE, fileName=
 
         par(mfrow = c(2, 2))
         plot(Day, Infected, type ="b")
+	if (add.extras) lines(Day[-1],diff(Infected), lty=2)
         plot(Day, Infected, log = "y")
         abline(lm(log10(Infected) ~ Day))
+	if (add.extras) lines(Day[-1],log10(diff(Infected)), lty=2)
+
         title(paste("Confirmed Cases 2019-nCoV:",toupper(geo.loc)), outer = TRUE, line = -2)
 
         col <- c("blue","red","green")
 
         matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col)
+	if (add.extras) {
+			matlines(fit$time[-1], sapply(fit[ , 2:4],diff), type = "l", lwd = 1, lty = 2, col = col)
+			matlines(fit$time, fit[,3]**SIR.model$params$beta, type = "l", lwd = 0.75, lty = 6, col = "purple")
+	}
         matplot(fit$time, fit[ , 2:4], type = "l", xlab = "Day", ylab = "Number of subjects", lwd = 2, lty = 1, col = col, log = "y")
+	if (add.extras) {
+		matlines(fit$time[-1], sapply(fit[ , 2:4],diff), type = "l", lwd = 1, lty = 2, col = col, log="y")
+		matlines(fit$time, fit[,3]**SIR.model$params$beta, type = "l", lwd = 0.75, lty = 6, col = "purple", log="y")
+	}
         ## Warning in xy.coords(x, y, xlabel, ylabel, log = log): 1 y value <= 0
         ## omitted from logarithmic plot
 
@@ -338,6 +354,7 @@ plt.SIR.model <- function(SIR.model, geo.loc="", interactiveFig=FALSE, fileName=
         legend("bottomright", c("Susceptible", "Infected", "Recovered"), lty = 1, lwd = 2, col = col, inset = 0.05)
         title(paste("SIR model 2019-nCoV:", toupper(geo.loc)), outer = TRUE, line = -22)
         #axis.Date(1,as.Date(names(data)[colOffset:ncol(data)]))
+
 
         ### INTERACTIVE PLOTS
         if (interactiveFig) {
@@ -349,33 +366,57 @@ plt.SIR.model <- function(SIR.model, geo.loc="", interactiveFig=FALSE, fileName=
 
 		length(Infected) <- length(fit[,1])
 
-		loc.data <- cbind(Infected,fit[,1:4])
+		loc.data <- cbind(Infected,fit[,1:4], Force=(fit[,3]*SIR.model$params$beta) )
 		#print(loc.data)
 
 		#model.ifig <- model.ifig %>% add_trace(y = ~Infected, name="Actual data", type='scatter', mode='markers', visible=TRUE)
 		# add traces
-		model.ifig <- add.N.traces(model.ifig,loc.data, c("data","Susceptible", "Infected", "Recovered"), vis=TRUE)
+		model.ifig <- add.N.traces(model.ifig,loc.data, c("data","Susceptible", "Infected", "Recovered","Force"), vis=TRUE)
 
 		# extra traces for activating log-scale
-		model.ifig <- add.N.traces(model.ifig, log10(loc.data), c("data","Susceptible", "Infected", "Recovered"), vis=FALSE)
-                        
+		model.ifig <- add.N.traces(model.ifig, log10(loc.data), c("data","Susceptible", "Infected", "Recovered", "Force"), vis=FALSE)
+
 		# log-scale menu based on nbr of traces...
                         
-		updatemenues <- log.sc.setup(4)
+		updatemenues <- log.sc.setup(5)
 
                 # add a menu for switching log/linear scale
                 model.ifig <- model.ifig %>% layout(updatemenus=updatemenues)
 
+		### DERIVS ###
+		derivs <- cbind(time=fit$time[-1],as.data.frame(lapply(fit[,2:4],diff)) ,force=diff(loc.data$Force))
+		#print(str(derivs))
+		derivs.ifig <- plot_ly(data=derivs, x=derivs$time)
+		derivs.data <- cbind(diff(Infected),derivs)
+		#print(str(derivs.data))
+		derivs.ifig <- add.N.traces(derivs.ifig, derivs.data, c("Deriv.data","Deriv.Susceptible", "Deriv.Infected", "Deriv.Recovered","Deriv.Force"), vis=TRUE)
+		derivs.ifig <- add.N.traces(derivs.ifig, log10(derivs.data), c("Deriv.data","Deriv.Susceptible", "Deriv.Infected", "Deriv.Recovered","Deriv.Force"), vis=FALSE)
+		updatemenues <- log.sc.setup(5)
+		derivs.ifig <- derivs.ifig %>% layout(updatemenus=updatemenues)
+		###
+		ifigs <- subplot(list(model.ifig, derivs.ifig), nrows = 2, shareX = TRUE, titleX = TRUE)
+		#print(ifigs)
 
-                # activate interactive figure
-                print(model.ifig)
 
+		# activate interactive figure
+		if (interactive.display) {
+			print(model.ifig)
+			print(ifigs)
+		}
+
+		#return(model.ifig)
 
 		if (!is.null(fileName)) {
 			FileName <- paste0(fileName,".html")
 			# informing where the plot is going to be saved
 			message("Saving interactive plot in ", FileName)
 			htmlwidgets::saveWidget(as_widget(model.ifig), FileName)
+		}
+
+		if (add.extras) {
+			return(ifigs)
+		} else {
+			return(model.ifig)
 		}
 	}
 }

@@ -4,7 +4,13 @@
 \alias{itrends}
 \title{function to visualize trends in daily changes in time series data interactively}
 \usage{
-itrends(ts.data = NULL, geo.loc = NULL, with.totals = FALSE, fileName = NULL)
+itrends(
+  ts.data = NULL,
+  geo.loc = NULL,
+  with.totals = FALSE,
+  fileName = NULL,
+  interactive.display = TRUE
+)
 }
 \arguments{
 \item{ts.data}{time series dataset to process}
@@ -14,6 +20,8 @@ itrends(ts.data = NULL, geo.loc = NULL, with.totals = FALSE, fileName = NULL)
 \item{with.totals}{a boolean flag to indicate whether the global totals should be displayed with the records for the specific location}
 
 \item{fileName}{file where to save the HTML version of the interactive figure}
+
+\item{interactive.display}{boolean flag to indicate whether the interactive plot will be displayed (pushed) to your browser}
 }
 \description{
 function to visualize trends in daily changes in time series data interactively
