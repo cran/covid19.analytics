@@ -4,7 +4,12 @@
 \alias{covid19.data}
 \title{function to read "live" data from reported covid19 cases}
 \usage{
-covid19.data(case = "aggregated", local.data = FALSE, debrief = FALSE)
+covid19.data(
+  case = "aggregated",
+  local.data = FALSE,
+  debrief = FALSE,
+  acknowledge = FALSE
+)
 }
 \arguments{
 \item{case}{a string indicating the category of the data, possible values are:
@@ -24,6 +29,8 @@ covid19.data(case = "aggregated", local.data = FALSE, debrief = FALSE)
 \item{local.data}{boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity}
 
 \item{debrief}{boolean specifying whether information about the read data is going to be displayed in screen}
+
+\item{acknowledge}{boolean flag to indicate that the user acknowledges where the data is coming from.  If FALSE, display data acquisition messages.}
 }
 \value{
 a dataframe (or a list in the case of "ALL") with the daily worlwide indicated type of data per country/region/city

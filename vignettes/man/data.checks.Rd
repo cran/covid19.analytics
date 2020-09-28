@@ -4,7 +4,14 @@
 \alias{data.checks}
 \title{function to check for data integrity and data consistency}
 \usage{
-data.checks(data, n0 = 5, nf = ncol(data), datasetName = "", details = TRUE)
+data.checks(
+  data,
+  n0 = 5,
+  nf = ncol(data),
+  datasetName = "",
+  details = TRUE,
+  disclose = FALSE
+)
 }
 \arguments{
 \item{data}{dataset to analyze}
@@ -16,6 +23,8 @@ data.checks(data, n0 = 5, nf = ncol(data), datasetName = "", details = TRUE)
 \item{datasetName}{optional argument to display the name of the dataset}
 
 \item{details}{optional argument to specify whether to show details about the records where inconsistencies were detected}
+
+\item{disclose}{boolean flag to indicate whether index of problematic entries are returned}
 }
 \description{
 function to check for data integrity and data consistency

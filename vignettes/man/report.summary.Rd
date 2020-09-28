@@ -27,10 +27,11 @@ report.summary(
 function to summarize the current situation, will download the latest data and summarize the top provinces/cities per case
 }
 \examples{
+# triggers CRAN checks for timing
+\dontrun{
 # displaying top 10s
 report.summary()
 
-\dontrun{
 # get the top 20
 report.summary(Nentries=20,graphical.output=FALSE)
 

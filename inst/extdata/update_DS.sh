@@ -24,6 +24,10 @@ echo $dailyReport
 curl -L -O $dailyReport
 
 
+### NEED to convert CSV files into RDS
+Rscript csv2rds.R
+
+
 ### City of Toronto data -- google drive
 #https://drive.google.com/file/d/1euhrML0rkV_hHF1thiA0G5vSSeZCqxHY/view?usp=sharing
 FILEID="1euhrML0rkV_hHF1thiA0G5vSSeZCqxHY"

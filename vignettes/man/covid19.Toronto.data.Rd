@@ -10,7 +10,8 @@ covid19.Toronto.data(
   data.fmt = "TS",
   local.data = FALSE,
   debrief = FALSE,
-  OLD.fmt = FALSE
+  OLD.fmt = FALSE,
+  acknowledge = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ covid19.Toronto.data(
 \item{debrief}{boolean specifying whether information about the read data is going to be displayed in screen}
 
 \item{OLD.fmt}{boolean flag to specify if the data is being read in an old format}
+
+\item{acknowledge}{boolean flag to indicate that the user acknowledges where the data is coming from.  If FALSE, display data acquisition messages.}
 }
 \value{
 a dataframe (or a list in the case of "original") with the latest data reported for the city of Toronto, ON - Canada

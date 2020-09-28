@@ -5,12 +5,14 @@
 \title{function that determines whether there are integrity issues within the datasets
 or changes to the structure of the data as reported by JHU/CCSEGIS}
 \usage{
-integrity.check(data, datasetName = "", recommend = TRUE)
+integrity.check(data, datasetName = "", disclose = FALSE, recommend = TRUE)
 }
 \arguments{
 \item{data}{dataset to analyze}
 
 \item{datasetName}{optional argument to display the name of the dataset}
+
+\item{disclose}{boolean flag to indicate whether index of problematic entries are returned}
 
 \item{recommend}{optional flag to recommend further actions}
 }

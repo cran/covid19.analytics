@@ -423,3 +423,71 @@ plt.SIR.model <- function(SIR.model, geo.loc="",
 
 #######################################################################
 
+
+sweep.SIR.models <- function(data=NULL, geo.loc="Hubei",
+		t0_range=15:20,
+			t1=NULL, deltaT=NULL,
+			tfinal=90,
+			fatality.rate = 0.02,
+			tot.population=1400000000) {
+#'
+#' function to perform a sweep of models and generate values of R0
+#'
+#' @param  data  time series dataset to consider
+#' @param  geo.loc  country/region to analyze
+#' @param  t0_range  range of initial date for data consideration
+#' @param  t1  final period of time for data consideration
+#' @param  deltaT interval period of time from t0, ie. number of days to consider since t0
+#' @param  tfinal  total number of days
+#' @param  fatality.rate  rate of causality, deafault value of 2 percent
+#' @param  tot.population  total population of the country/region
+#'
+#' @export
+#'
+#' @examples
+#' # read TimeSeries data
+#' TS.data <- covid19.data("TS-confirmed")
+#' # select a location of interest, eg. France
+#' # France has many entries, just pick "la France"
+#' France.data <- TS.data[ (TS.data$Country.Region == "France") & (TS.data$Province.State == ""),]
+#' # sweep values of R0 based on range of dates to consider for the model
+#' ranges <- 15:20
+#' deltaT <- 20
+#' params_sweep <- sweep.SIR.models(data=France.data,geo.loc="France", t0_range=ranges, deltaT=deltaT)
+#' # obtain the R0 values from the parameters
+#' R0s <- unlist(params_sweep["R0",])
+#' # nbr of infected cases
+#' FR.infs<- preProcessingData(France.data,"France")
+#' # average per range
+#' # define ranges
+#' lst.ranges <- lapply(ranges, function(x) x:(x+deltaT))
+#' # compute averages
+#' avg.FR.infs <- lapply(lst.ranges, function(x) mean(FR.infs[x]))
+#' # plots
+#' plot(R0s, type='b')
+#' # plot vs average number of infected cases
+#' plot(avg.FR.infs, R0s, type='b')
+#'
+
+        wrapperFn <- function(t0) {
+        # wrapper fn to generate.SIR.model
+
+                #m1 <- generate.SIR.model(data,geo.loc,t0,t1,deltaT=20 ,fatality.rate,tot.population,
+                #       staticPlt=FALSE,interactiveFig=FALSE, add.extras=FALSE)
+                m1 <- generate.SIR.model (data=data, geo.loc=geo.loc, t0, t1=t1, deltaT=deltaT, tfinal=tfinal,
+						fatality.rate=fatality.rate, tot.population=tot.population,
+						interactiveFig=FALSE, staticPlt=FALSE)
+                return(m1$params)
+        }
+
+
+        models <- sapply(t0_range,wrapperFn)
+        #models <- mapply(generate.SIR.model, data,geo.loc,t0_range,t1,deltaT,tfinal,
+        #                       fatality.rate, tot.population,
+        #                       interactiveFig=FALSE, staticPlt=FALSE)
+
+        return(models)
+}
+
+#######################################################################
+

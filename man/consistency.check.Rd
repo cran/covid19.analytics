@@ -9,6 +9,7 @@ consistency.check(
   n0 = 5,
   nf = ncol(data),
   datasetName = "",
+  disclose = FALSE,
   details = TRUE
 )
 }
@@ -20,6 +21,8 @@ consistency.check(
 \item{nf}{column where the cumulative data ends}
 
 \item{datasetName}{optional argument to display the name of the dataset}
+
+\item{disclose}{boolean flag to indicate whether index of problematic entries are returned}
 
 \item{details}{optional argument to specify whether to show details about the records where inconsistencies were detected}
 }

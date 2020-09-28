@@ -9,9 +9,10 @@ preProcessingData(data0, geo.loc)
 \arguments{
 \item{data0}{data set}
 
-\item{geo.loc}{geopgraphical location, can be a country, region, province or city}
+\item{geo.loc}{geopgraphical location, can be a country, region, province or city
+
+#@keywords internal}
 }
 \description{
 auxiliary function to pre-process data per geographical location
 }
-\keyword{internal}

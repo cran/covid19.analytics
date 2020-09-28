@@ -689,10 +689,11 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, geo.loc=NULL,
 #' @export
 #'
 #' @examples
+#' # triggers CRAN checks for timing
+#' \donttest{
 #' # displaying top 10s
 #' report.summary()
 #'
-#' \dontrun{
 #' # get the top 20
 #' report.summary(Nentries=20,graphical.output=FALSE)
 #'
@@ -749,7 +750,10 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, geo.loc=NULL,
 		data <- covid19.data(i)
 
 		# run integrity and consistency checks...
-		data.checks(data,datasetName=i,details=FALSE)
+		data.checks(data,datasetName=i,details=FALSE,disclose=FALSE)
+
+		# >> nullify data
+		#data <- nullify.data(data, stringent=TRUE)
 
 		# if Nentries is set to 0, will consider *all* entries
 		if (Nentries==0) Nentriex <- nrow(data)
@@ -867,6 +871,9 @@ report.summary <- function(cases.to.process="ALL", Nentries=10, geo.loc=NULL,
 	##### PROCESS "AGREGATED" DATA  #######
 	if ( (toupper(cases.to.process)=="ALL") | (toupper(cases.to.process)=="AGG") ) {
 		agg.data <- covid19.data("aggregated")
+
+		# >> nullify data
+		agg.data <- nullify.data(agg.data)
 		process.agg.cases(agg.data, Nentries, geo.loc=geo.loc, graphical.output)
 
 		# report integrity and consistency checks in the data

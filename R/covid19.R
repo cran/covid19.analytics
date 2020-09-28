@@ -6,7 +6,7 @@
 
 #######################################################################
 
-covid19.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE) {
+covid19.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE, acknowledge=FALSE) {
 #' function to read "live" data from reported covid19 cases
 #'
 #' @param  case  a string indicating the category of the data, possible values are:
@@ -24,6 +24,7 @@ covid19.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE) {
 #'      "ts-Toronto"       :  data for the City of Toronto, ON - Canada
 #' @param  local.data  boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity
 #' @param  debrief  boolean specifying whether information about the read data is going to be displayed in screen
+#' @param  acknowledge  boolean flag to indicate that the user acknowledges where the data is coming from.  If FALSE, display data acquisition messages.
 #'
 #' @return  a dataframe (or a list in the case of "ALL") with the daily worlwide indicated type of data per country/region/city
 #'
@@ -42,10 +43,10 @@ covid19.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE) {
 
 	if (tolower(case) == "ts-toronto") {
 		# data from the the City of Toronto
-		return(covid19.Toronto.data(data.fmt="TS",local.data=local.data,debrief=debrief))
+		return(covid19.Toronto.data(data.fmt="TS",local.data=local.data,debrief=debrief,acknowledge=acknowledge))
 	} else {
 		# data coming from JHU
-		return(covid19.JHU.data(case,local.data,debrief))
+		return(covid19.JHU.data(case,local.data,debrief,acknowledge))
 	}
 }
 
@@ -66,7 +67,7 @@ debriefing <- function(data,debrief=TRUE) {
 ######################################################################
 
 
-covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE) {
+covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE, acknowledge=FALSE) {
 #' function to read "live" data as reported by JHU's CCSE repository
 #'
 #' @param  case  a string indicating the category of the data, possible values are:
@@ -84,6 +85,7 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
 #'	"Toronto"	:  data for the City of Toronto, ON - Canada
 #' @param  local.data  boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity
 #' @param  debrief  boolean specifying whether information about the read data is going to be displayed in screen
+#' @param  acknowledge  boolean flag to indicate that the user acknowledges where the data is coming from.  If FALSE, display data acquisition messages.
 #'
 #' @return  a dataframe (or a list in the case of "ALL") with the daily worlwide indicated type of data per country/region/city
 #'
@@ -216,7 +218,7 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
 				"ts-confirmed-us","ts-deaths-us",
 				"ts-Toronto"
 				)
-	if (! tolower(case) %in% possible.cases) 
+	if (! tolower(case) %in% possible.cases)
 		stop("Unrecognized selection of case <",case,"> -- possible options are: ",paste(possible.cases,collapse=" "))
 
 
@@ -240,13 +242,16 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
 
 		# URL and filename
 		cases.URL <- cases
-
-		message("Data being read from JHU/CCSE repository")
-		header('~')
+    if (!acknowledge) {
+		  message("Data being read from JHU/CCSE repository")
+		  header('~')
+    }
 	} else {
 		covid19.pckg <- 'covid19.analytics'
-		message("Data being read from *local* repo in the '",covid19.pckg,"' package")
-		header('~')
+		if (!acknowledge) {
+		  message("Data being read from *local* repo in the '",covid19.pckg,"' package")
+		  header('~')
+		}
 
 		#LOCAL.repo <- "data/"
 		#print(system.file("extdata", "03-27-2020.csv", package = covid19.pckg))
@@ -255,34 +260,41 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
                         # aggregated data
                         # 'aggregated'   = paste0(LOCAL.repo,format(Sys.Date()-1,format="%m-%d-%Y"),".csv"),
 			# 'aggregated'   = paste0(LOCAL.repo,"03-24-2020.csv"),
-			'aggregated'   = system.file("extdata","07-04-2020.csv", package=covid19.pckg, mustWork = TRUE),
+			'aggregated'   = system.file("extdata","09-15-2020.csv.RDS", package=covid19.pckg, mustWork = TRUE),
                         # GLOBAL TimeSeries cases
                         # 'ts-confirmed' = paste0(LOCAL.repo,"time_series_covid19_confirmed_global.csv"),
                         # 'ts-deaths'    = paste0(LOCAL.repo,"time_series_covid19_deaths_global.csv"),
-			'ts-confirmed' =  system.file("extdata","time_series_covid19_confirmed_global.csv", package=covid19.pckg, mustWork = TRUE),
-			'ts-deaths'    =  system.file("extdata","time_series_covid19_deaths_global.csv", package=covid19.pckg, mustWork = TRUE),
-			'ts-recovered' =  system.file("extdata","time_series_covid19_recovered_global.csv", package=covid19.pckg, mustWork = TRUE),
+			'ts-confirmed' =  system.file("extdata","time_series_covid19_confirmed_global.csv.RDS", package=covid19.pckg, mustWork = TRUE),
+			'ts-deaths'    =  system.file("extdata","time_series_covid19_deaths_global.csv.RDS", package=covid19.pckg, mustWork = TRUE),
+			'ts-recovered' =  system.file("extdata","time_series_covid19_recovered_global.csv.RDS", package=covid19.pckg, mustWork = TRUE),
 			# US TimeSeries cases
-			'ts-confirmed-us' =  system.file("extdata","time_series_covid19_confirmed_US.csv", package=covid19.pckg, mustWork = TRUE),
-			'ts-deaths-us'    =  system.file("extdata","time_series_covid19_deaths_US.csv", package=covid19.pckg, mustWork = TRUE),
+			'ts-confirmed-us' =  system.file("extdata","time_series_covid19_confirmed_US.csv.RDS", package=covid19.pckg, mustWork = TRUE),
+			'ts-deaths-us'    =  system.file("extdata","time_series_covid19_deaths_US.csv.RDS", package=covid19.pckg, mustWork = TRUE),
                         # depricated time series
                         # 'ts-dep-confirmed' = paste0(LOCAL.repo,"time_series_19-covid-Confirmed.csv"),
                         # 'ts-dep-deaths'    = paste0(LOCAL.repo,"time_series_19-covid-Deaths.csv"),
                         # 'ts-dep-recovered' = paste0(LOCAL.repo,"time_series_19-covid-Recovered.csv")
-			'ts-dep-confirmed' = system.file("extdata","time_series_19-covid-Confirmed.csv", package=covid19.pckg, mustWork = TRUE),
-			'ts-dep-deaths'    = system.file("extdata","time_series_19-covid-Deaths.csv", package=covid19.pckg, mustWork = TRUE),
-			'ts-dep-recovered' = system.file("extdata","time_series_19-covid-Recovered.csv", package=covid19.pckg, mustWork = TRUE)
+			'ts-dep-confirmed' = system.file("extdata","time_series_19-covid-Confirmed.csv.RDS", package=covid19.pckg, mustWork = TRUE),
+			'ts-dep-deaths'    = system.file("extdata","time_series_19-covid-Deaths.csv.RDS", package=covid19.pckg, mustWork = TRUE),
+			'ts-dep-recovered' = system.file("extdata","time_series_19-covid-Recovered.csv.RDS", package=covid19.pckg, mustWork = TRUE)
                 )
 
 		cases.URL <- cases
-        }
+  }
 
-	message("Reading data from ", cases)
+	if (!acknowledge) {
+	  message("Reading data from ", cases)
+	}
 
 	# Attempt to protect against bad internet conenction or misspelled package name
 	tryCatch( {
-		# read data from the URL
-		covid19.cases <- read.csv(cases.URL, header=TRUE)
+		if (!local.data) {
+			# read data from the URL
+			covid19.cases <- read.csv(cases.URL, header=TRUE)
+		} else {
+			# will read data from LOCAL data, using RDS
+			load(cases.URL)
+		}
 
 		if (tolower(case) != 'aggregated') {
 			# US cases are reported with additional fields
@@ -303,10 +315,12 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
 			t0 <- names(covid19.cases)[beginning.dates]
 			tf <- names(covid19.cases)[ncol(covid19.cases)]
 
-			message("Data retrieved on ",Sys.time()," || ",
-				"Range of dates on data: ",t0,"--",tf,
-				" | Nbr of records: ",nrow(covid19.cases))
-			header('-')
+			if (!acknowledge) {
+  			message("Data retrieved on ",Sys.time()," || ",
+  				"Range of dates on data: ",t0,"--",tf,
+  				" | Nbr of records: ",nrow(covid19.cases))
+  			header('-')
+			}
 
 			# check consistency of the data
 			#consistency.check(covid19.ts,datasetName=case,details=FALSE)
@@ -321,7 +335,7 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
 
 		return(covid19.cases)
 		},
-        
+
 		# warning
 		warning = function(cond) {
 				errorHandling.Msg(cond,cases.URL)
@@ -344,7 +358,7 @@ covid19.JHU.data <- function(case='aggregated', local.data=FALSE, debrief=FALSE)
 ###########################################################################
 
 
-covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, OLD.fmt=FALSE) {
+covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, OLD.fmt=FALSE, acknowledge=FALSE) {
 #' function to import data from the city of Toronto, ON - Canada
 #' as reported by the City of Toronto
 #'	https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/
@@ -353,6 +367,7 @@ covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, O
 #' @param  local.data  boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity
 #' @param  debrief  boolean specifying whether information about the read data is going to be displayed in screen
 #' @param  OLD.fmt  boolean flag to specify if the data is being read in an old format
+#' @param  acknowledge  boolean flag to indicate that the user acknowledges where the data is coming from.  If FALSE, display data acquisition messages.
 #'
 #' @return  a dataframe (or a list in the case of "original") with the latest data reported for the city of Toronto, ON - Canada
 #'
@@ -369,7 +384,9 @@ covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, O
 		city.of.Toronto.data <- "https://drive.google.com/uc?export=download&id=1euhrML0rkV_hHF1thiA0G5vSSeZCqxHY"
 		# temporary file to retrieve data, does not exist yet ==> mustwork=FALSE to avoid warning message
 		Tor.xlsx.file <- normalizePath(file.path(tempdir(), "covid19-toronto.xslx"), mustWork=FALSE)
-		header('',paste("Accessing file from...",Tor.xlsx.file))
+		if (!acknowledge) {
+		  header('',paste("Accessing file from...",Tor.xlsx.file))
+		}
 
 		# save excel file
 		#if (capabilities('libcurl')) {
@@ -380,32 +397,50 @@ covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, O
 		download.file(city.of.Toronto.data, destfile=Tor.xlsx.file, mode = 'wb' )	#method=dwnld.method)
         } else {
                 # use local data
-		covid19.pckg <- 'covid19.analytics'
-                message("Data being read from *local* repo in the '",covid19.pckg,"' package")
-                header('~')
-                Tor.xlsx.file <- system.file("extdata","covid19_Toronto.xlsx", package=covid19.pckg, mustWork = TRUE)
-        }
+  		covid19.pckg <- 'covid19.analytics'
+  		if (!acknowledge) {
+    		message("Data being read from *local* repo in the '",covid19.pckg,"' package")
+        header('~')
+  		}
+      Tor.xlsx.file <- system.file("extdata","covid19_Toronto.xlsx", package=covid19.pckg, mustWork = TRUE)
+    }
 
 
 	if (file.exists(Tor.xlsx.file)) {
 		###~~~~~~
-		print(Tor.xlsx.file)
+		#print(Tor.xlsx.file)
 		###~~~~~~
 		# obtain names of sheets
 		lst.sheets <- excel_sheets(Tor.xlsx.file)
 
-		print(lst.sheets)
+		#print(lst.sheets)
 
 		# if only "TS" identify corresponding sheet
 		key.wrd <- "Cumulative Cases by Reported"
 		tgt.sheet <- pmatch(key.wrd,lst.sheets)
+		#if (is.na(tgt.sheet)) {
+		#	#key.wrd <- "Cases by Episode Date"
+		#	#tgt.sheet <- pmatch(key.wrd,lst.sheets)
+		#	covid19.Toronto.data(data.fmt,local.data=TRUE,debrief, OLD.fmt, acknowledge)
+		#}
 
 		# read data
 		if (toupper(data.fmt)=="TS") {
-			header('',"Reading TimeSeries data...")
-			toronto <- read_excel(Tor.xlsx.file,sheet=tgt.sheet)
+			# check that the target sheet was found
+			if (!is.na(tgt.sheet)) {
+			  if (!acknowledge) {
+			    header('',"Reading TimeSeries data...")
+			  }
+				toronto <- read_excel(Tor.xlsx.file,sheet=tgt.sheet)
+			} else {
+				message(key.wrd, " NOT FOUND!")
+				toronto.loc <- covid19.Toronto.data(data.fmt,local.data=TRUE,debrief=debrief, OLD.fmt, acknowledge=acknowledge)
+				return(toronto.loc)
+			}
 		} else {
-			header('',"Collecting all data reported...")
+			  if (!acknowledge) {
+			    header('',"Collecting all data reported...")
+			  }
 			toronto <- list()
 			# iterate on each sheet...
 			for (sht in lst.sheets) {
@@ -418,7 +453,8 @@ covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, O
 	} else {
 		if (!local.data) {
 			warning("Could not access data from 'City of Toronto' source, attempting to reach local repo")
-			toronto <- covid19.Toronto.data(data.fmt=data.fmt,local.data=TRUE,debrief=debrief)
+			toronto.loc <- covid19.Toronto.data(data.fmt=data.fmt,local.data=TRUE,debrief=debrief, OLD.fmt, acknowledge=acknowledge)
+			return(toronto.loc)
 		} else {
 			stop("An error occurred accessing the data for the City of Toronto")
 		}
@@ -502,11 +538,12 @@ covid19.Toronto.data <- function(data.fmt="TS",local.data=FALSE,debrief=FALSE, O
 
 
 # wrapper function around the covid19.data() function
-covid19.US.data <- function(local.data=FALSE,debrief=FALSE) {
+covid19.US.data <- function(local.data=FALSE,debrief=FALSE,acknowledge=FALSE) {
 #' function to read the TimeSeries US detailed data
 #'
 #' @param  local.data  boolean flag to indicate whether the data will be read from the local repo, in case of connectivity issues or data integrity
 #' @param  debrief  boolean specifying whether information about the read data is going to be displayed in screen
+#' @param  acknowledge  boolean flag to indicate that the user acknowledges where the data is coming from.  If FALSE, display data acquisition messages.
 #'
 #' @return  TimeSeries dataframe with data for the US
 #'
@@ -514,16 +551,16 @@ covid19.US.data <- function(local.data=FALSE,debrief=FALSE) {
 #'
 
 	# read confirmed cases
-	US.conf <- covid19.data("ts-confirmed-US",local.data)
+	US.conf <- covid19.data("ts-confirmed-US",local.data,acknowledge=acknowledge)
 
 	# read deaths cases
-	US.deaths <- covid19.data("ts-deaths-US",local.data)
+	US.deaths <- covid19.data("ts-deaths-US",local.data,acknowledge=acknowledge)
 
 	# combine cases
 	US.cases <- rbind(US.conf,US.deaths)
 
         # debrief...
-        debriefing(US.cases,debrief) 
+        debriefing(US.cases,debrief)
 
 	return(US.cases)
 }
