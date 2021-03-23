@@ -26,13 +26,15 @@ test_that("Data Retrieval", {
 
 	# Toronto Data
         # original data type
-        expect_type(covid19.Toronto.data("original"), "list")
+        expect_type(covid19.Toronto.data(origin="city",data.fmt="original"), "list")
 
         # TS Toronto data
-	# failing on WINDOWS i386
+	# failing on WINDOWS ##i386
 	#tor.data <- covid19.Toronto.data()
 	#expect_s3_class(tor.data,"data.frame")
-        tor.data <- covid19.Toronto.data(local.data=TRUE)
+
+	## failing on WINDOWS -- R 3.6.3
+	tor.data <- covid19.Toronto.data(local.data=TRUE)
         expect_s3_class(tor.data,"data.frame")
 
 	# US data
@@ -47,9 +49,11 @@ test_that("Data Retrieval", {
 
 test_that("Toronto Data", {
 	# TS Toronto data
-	# failing on WINDOWS i386
+	# failing on WINDOWS ##i386
 	#tor.data <- covid19.Toronto.data()
 	#expect_s3_class(tor.data,"data.frame")
+
+	# failing on WINDOWS -- R 3.6.3
 	tor.data <- covid19.Toronto.data(local.data=TRUE)
 	expect_s3_class(tor.data,"data.frame")
 
@@ -76,6 +80,25 @@ test_that("integrity/consistency", {
 
 #####################################################################
 
+##### CONTIONAL TESTS ####### ==> to reduce testing time
+# flag to control how many test need to be run...
+# using *either*
+#	an OS enviroment variable COVID19ANALYTICS = "full.test"
+# OR
+#	an R variable covid19analytics.testing = "full.test"
+
+# check OS environment variable
+c19fulltest_OS <- Sys.getenv("COVID19ANALYTICS")=="full.test"
+# check R enviroment variable
+c19fulltest_R <- ( ("covid19analytics.testing" %in% ls()) && (covid19analytics.testing == "full.test") )
+
+message(c19fulltest_OS)
+message(c19fulltest_R)
+
+# check if the fulltest flags were activated...
+if (c19fulltest_OS | c19fulltest_R) {
+
+	message("Running FULL batery of TEST for covid19.analytics...")
 
 ### TOTS.PER.LOCATION()
 
@@ -94,7 +117,6 @@ test_that("TOTS.PER.LOCATION fn", {
 		#pdf(paste0("Japan_",i.case,".pdf"))
 		expect_invisible(tots.per.location(all.data,"Japan"))
 		#dev.off()
-
 	}
 })
 
@@ -188,6 +210,7 @@ world.SIR.model <- generate.SIR.model(data,"ALL", t0=1,t1=15, tot.population=7.8
 plt.SIR.model(world.SIR.model,"World",interactiveFig=FALSE,fileName="world.SIR.model")
 
 
+}
 
 ####
 # clean up
