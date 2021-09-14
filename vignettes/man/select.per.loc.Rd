@@ -9,7 +9,7 @@ select.per.loc(data, geo.loc)
 \arguments{
 \item{data}{data set to process}
 
-\item{geo.loc}{geopgraphical location, can be a country, region, province or city}
+\item{geo.loc}{geographical location, can be a country, region, province or city}
 }
 \description{
 auxiliary function to select data based on geographical location

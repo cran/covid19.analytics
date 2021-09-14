@@ -85,7 +85,7 @@ category_list <- list("confirmed"="ts-confirmed", "recovered"="ts-recovered", "d
 ts.data <- covid19.data("ts-ALL")
 TGTs.LOCns <- (unique(ts.data[pmatch("Country",names(ts.data))]))
 #Add All option manually to dropdown to display all countries data to the end of the dropdown
-continents <- c("SouthAmerica","NorthAmerica","CentralAmerica","America","Europe","Asia","Oceania")
+continents <- c("Africa","America","SouthAmerica","NorthAmerica","CentralAmerica","Asia","Europe","Oceania")
 TGTs.LOCns <- list(Countries=TGTs.LOCns[[1]], ALL=list("ALL"))
 #print(typeof(TGTs.LOCns))
 
@@ -132,7 +132,8 @@ sidebar <- dashboardSidebar(
 					#
 					menuItem("Data Sources", icon=icon("file-code-o"),startExpanded = FALSE,
 						menuItem("JHU CCSE data repository", icon = icon("file-code-o"), href = "https://github.com/CSSEGISandData/COVID-19"),
-						menuItem("City of Toronto", icon = icon("file-code-o"), href = "https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/"),
+#						menuItem("City of Toronto", icon = icon("file-code-o"), href = "https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/"),
+						menuItem("City of Toronto", icon = icon("file-code-o"), href = "ihttps://www.toronto.ca/home/covid-19/covid-19-pandemic-data/"),
 						menuItem("NCBI datasets", icon = icon("file-code-o"), href = "https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2")
 					),
 					menuItem("External Dashboards", icon=icon("file-code-o"),startExpanded = FALSE, 
@@ -174,7 +175,7 @@ dashboardUI <- function(id) {
 		),
 		tabBox(width=12,  
 			tabPanel("ITrend Plot",
-						"The plot represents the normalizaed trend in number of cases",
+						"The plot represents the normalized trend in number of cases",
 						"Daily changes vs total changes in a log plot, for the indicated regions", br(),br(), 
 						withSpinner(
 							plotlyOutput(ns("itrend_plot"),  height = "100%", width = '100%'),

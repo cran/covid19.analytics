@@ -1,15 +1,20 @@
 # COVID19.Analytics
 
-<!--
+<!-- ~*~ -->
 <!-- badges: start -->
+<!--
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-last-release/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![CRAN checks](https://cranchecks.info/badges/worst/covid19.analytics)](https://cranchecks.info/pkgs/covid19.analytics)
 [![Downloads](https://cranlogs.r-pkg.org/badges/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
+[![R-CMD-check](https://github.com/mponce0/covid19.analytics/actions/workflows/r.yml/badge.svg)](https://github.com/mponce0/covid19.analytics/actions/workflows/r.yml)
 [![Build Status](https://travis-ci.org/mponce0/covid19.analytics.svg?branch=master)](https://travis-ci.org/mponce0/covid19.analytics)
 [![codecov](https://codecov.io/gh/mponce0/covid19.analytics/branch/master/graph/badge.svg)](https://codecov.io/gh/mponce0/covid19.analytics)
-<!-- badges: end -->
+[![DOI](https://zenodo.org/badge/246323140.svg)](https://zenodo.org/badge/latestdoi/246323140)	<!--[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4640307.svg)](https://doi.org/10.5281/zenodo.4640307)-->
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02995/status.svg)](https://doi.org/10.21105/joss.02995)	<!-- [![JOSSstatus](https://joss.theoj.org/papers/43bab096ad574f4510a7258c20a1153d/status.svg)](https://joss.theoj.org/papers/43bab096ad574f4510a7258c20a1153d) -->
 -->
+<!-- badges: end -->
+<!-- ~*~ -->
 
 
 <!-------------  TOC  ----------------->
@@ -42,9 +47,9 @@
 
 ## Introduction <a name="introduction"></a>
 The "covid19.analytics" R package allows users to obtain live\* worldwide data from the
-*novel CoronaVirus Disease* originally reported in 2019, CoViD-19.
+*novel Coronavirus Disease* originally reported in 2019, COVID-19.
 
-One of the main goals of this package is to make the latest data about the covid19 pandemic
+One of the main goals of this package is to make the latest data about the COVID-19 pandemic
 promptly available to researchers and the scientific community.
 
 The "covid19.analytics" package also provides basic analysis tools and functions to
@@ -59,7 +64,7 @@ investigate these datasets.
 </object>
 -->
 
-The following sections briefly describe some of the covid19.analytics package main features, we strongly recomend users to read our paper ["covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the Corona Virus Disease Pandemic"](https://arxiv.org/abs/2009.01091) (https://arxiv.org/abs/2009.01091) where further details about the package are presented and discussed.
+The following sections briefly describe some of the covid19.analytics package main features, we strongly recomend users to read our paper ["covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the Coronavirus Disease Pandemic"](https://arxiv.org/abs/2009.01091) (https://arxiv.org/abs/2009.01091) where further details about the package are presented and discussed.
 
 
 
@@ -68,11 +73,11 @@ The `covid19.analytics` package is an open source tool, which its main implement
 is the R package.
 In addition to this, the package has a few more adds-on:
 
- * a central GitHUB repository, https://github.com/mponce0/covid19.analytics
+ * a central GitHub repository, https://github.com/mponce0/covid19.analytics
  where the latest development version and source code of the package are available.
  Users can also submit tickets for bugs, suggestions or comments using the "issues" tab.
  
- * a rendered version with live examples and documentation also hosted at GitHUB pages,
+ * a rendered version with live examples and documentation also hosted at GitHub pages,
  https://mponce0.github.io/covid19.analytics/
  
  * a dashboard for interactive usage of the package with extended capabilities
@@ -81,7 +86,7 @@ In addition to this, the package has a few more adds-on:
    The dashboard can also be deployed locally using the `covid19Explorer()` function which
  is part of the `covid19.analytics` package.
  
- * a *backup* data repository hosted at GitHUB,
+ * a *backup* data repository hosted at GitHub,
  https://github.com/mponce0/covid19analytics.datasets --
         where replicas of the live datasets are stored for redundancy and
  robust accesibility sake.
@@ -91,28 +96,28 @@ In addition to this, the package has a few more adds-on:
 ### Data Sources <a name="dataSrcs"></a>
 The "covid19.analytics" package provides access to the following open-access data sources:
 
- * **[1]** <a name="JHUrepo"></a> 2019 Novel CoronaVirus CoViD-19 (2019-nCoV) Data Repository by
+ * **[1]** <a name="JHUrepo"></a> 2019 Novel CoronaVirus COVID-19 (2019-nCoV) Data Repository by
 Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)
 https://github.com/CSSEGISandData/COVID-19
 
  * **[2]** <a name="TORdata"></a> COVID-19: Status of Cases in Toronto -- City of Toronto
-https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/
+https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/
 
  * **[3]** <a name="ODtor"></a> COVID-19: Open Data Toronto
 https://open.toronto.ca/dataset/covid-19-cases-in-toronto/
 
  * **[4]** <a name="HealthCan"></a> COVID-19: Health Canada
+https://health-infobase.canada.ca/covid-19/
 <!--
 https://health-infobase.canada.ca/src/data/covidLive
 https://health-infobase.canada.ca/src/data/covidLive/covid19-download.csv
 -->
-https://health-infobase.canada.ca/covid-19/
 
  * **[5]** <a name="NCBIgenome"></a> Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome
 NCBI Reference Sequence: NC_045512.2
 https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2
 
- * **[6]** <a name="OWIDvaccination"></a> CoViD-19 Vaccination and Testing records from "Our World In Data" (OWID)
+ * **[6]** <a name="OWIDvaccination"></a> COVID-19 Vaccination and Testing records from "Our World In Data" (OWID)
  https://github.com/owid/
  
  * **[7]** <a name="VCpandemics"></a> Pandemics historical records from Visual Capitalist (and sources within)
@@ -127,7 +132,7 @@ https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2
 <details>
     <summary>Click to Expand/Collapse</summary>
 
-The `covid19.data()` function allows users to obtain realtime data about the CoViD19 reported cases
+The `covid19.data()` function allows users to obtain realtime data about the COVID-19 reported cases
 from the JHU's CCSE repository, in the following modalities:
 * "aggregated" data for the latest day, with a great 'granularity' of geographical regions (ie. cities, provinces, states, countries)
 * "time series" data for larger accumulated geographical regions (provinces/countries)
@@ -255,7 +260,7 @@ Be sure also to check the compatibility of these datasets using the `Data Integr
 
 
 ### Data Integrity and Consistency Checks <a name="dataintegrity"></a>
-Due to the ongoing and rapid changing situation with the CoViD-19 pandemic, sometimes the reported data has been detected to change its internal format or even show some "anomalies" or "inconsistencies" (see https://github.com/CSSEGISandData/COVID-19/issues/).
+Due to the ongoing and rapid changing situation with the COVID-19 pandemic, sometimes the reported data has been detected to change its internal format or even show some "anomalies" or "inconsistencies" (see https://github.com/CSSEGISandData/COVID-19/issues/).
 
 For instance, in some cumulative quantities reported in time series datasets, it has been observed that these quantities instead of continuously increase sometimes they decrease their values which is something that should not happen, (see for instance, https://github.com/CSSEGISandData/COVID-19/issues/2165). We refer to this as inconsistency of **"type II"**.
 
@@ -292,7 +297,7 @@ the genetic sequencing of the virus is moving almost at equal pace.
 That's why the covid19.analytics package provides access to a good number of the genomics
 data currently available.
 
-The `covid19.genomic.data()` function allows users to obtain the CoViD19's
+The `covid19.genomic.data()` function allows users to obtain the COVID-19's
 genomics data from NCBI's databases [[5](#NCBIgenome)].
 The type of genomics data accessible from the package is described in
 the following table.
@@ -399,37 +404,37 @@ and daily changes in the reported number of cases.
   </tr>
   <tr>
     <td> <code>covid19.data</code> </td>
-    <td> obtain live* worldwide data for covid19 virus, from the JHU's CCSE repository [<a href="#JHUrepo">1</a>] </td>
+    <td> obtain live* worldwide data for COVID-19 virus, from the JHU's CCSE repository [<a href="#JHUrepo">1</a>] </td>
     <td> return dataframes/list with the collected data </td>
   </tr>
    <tr>
     <td> <code>covid19.Toronto.data</code> </td>
-    <td> obtain live* data for covid19 cases in the city of Toronto, ON Canada, from the City of Toronto reports [<a href="#TORdata">2</a>] --or-- Open Data Toronto [<a href="#ODtor">3</a>] </td>
+    <td> obtain live* data for COVID-19 cases in the city of Toronto, ON Canada, from the City of Toronto reports [<a href="#TORdata">2</a>] --or-- Open Data Toronto [<a href="#ODtor">3</a>] </td>
     <td> return dataframe/list with the collected data </td>
   </tr>
    <tr>
     <td> <code>covid19.Canada.data</code> </td>
-    <td> obtain live* Canada specific data for covid19 cases, from Health Canada [<a href="#HealthCan">4</a>] </td>
+    <td> obtain live* Canada specific data for COVID-19 cases, from Health Canada [<a href="#HealthCan">4</a>] </td>
     <td> return dataframe/list with the collected data </td>
   </tr>
    <tr>
     <td> <code>covid19.US.data</code> </td>
-    <td> obtain live* US specific data for covid19 virus, from the JHU's CCSE repository [<a href="#JHUrepo">1</a>] </td>
+    <td> obtain live* US specific data for COVID-19 virus, from the JHU's CCSE repository [<a href="#JHUrepo">1</a>] </td>
     <td> return dataframe with the collected data </td>
   </tr>
 
    <tr>
     <td> <code>covid19.vaccination</code> </td>
-    <td> obtain up-to-date CoViD-19 vaccination records from [<a href="#OWIDvaccination">5</a>] </td>
+    <td> obtain up-to-date COVID-19 vaccination records from [<a href="#OWIDvaccination">5</a>] </td>
     <td> return dataframe/list with the collected data </td>
   </tr>
 
    <tr>
     <td> <code>covid19.testing.data</code> </td>
-    <td> obtain up-to-date CoViD-19 testing records from [<a href="#OWIDvaccination">5</a>] </td>
+    <td> obtain up-to-date COVID-19 testing records from [<a href="#OWIDvaccination">5</a>] </td>
     <td> return dataframe with the testing data or testing data details </td>
   </tr>
- 
+
    <tr>
     <td> <code>pandemics.data</code> </td>
     <td> obtain pandemics and pandemics vaccination *historical* records from [<a href="#VCpandemics">6</a>] </td>
@@ -552,11 +557,13 @@ and daily changes in the reported number of cases.
 ---
 
 
-<!--
+<!-- ~*~ -->
 ### API Documentation
+<!--
 Documentation of the functions available in the `covid19.analytrics` package can be found at
 https://cran.r-project.org/web/packages/covid19.analytics/covid19.analytics.pdf
 -->
+<!-- ~*~ -->
 
 ### Details and Specifications of the Analytical & Visualization Functions
 <details>
@@ -812,13 +819,18 @@ library(covid19.analytics)
 </details>
 
 
+
 ## Examples  <a name="examples"></a>
+
+In this section, we include basic examples of the main features of the `covid19.analytics` package.
+
+  * We strongly recommend users to check further examples and details about the `covid19.analytics` package available in our manuscript,
+https://arxiv.org/abs/2009.01091 
+
+  * Code/cripts with examples and tutorials are available at https://github.com/mponce0/covid19.analytics/tree/literature/tutorial 
+
 <details>
     <summary>Click to Expand/Collapse</summary>
-
-Further examples and details about the covid19.analytics package are provided in our manuscript,
-https://arxiv.org/abs/2009.01091 .
-
 
 ### Reading data
 ```R
@@ -836,6 +848,9 @@ https://arxiv.org/abs/2009.01091 .
 
 # reads time series data for casualties
  covid19.TS.deaths <- covid19.data("ts-deaths")
+
+# reads testing data
+ testing.data <- covid19.testing.data()
 ```
 
 Read covid19's genomic data 
@@ -845,6 +860,15 @@ Read covid19's genomic data
 
 # display the actual RNA seq
  covid19.gen.seq$NC_045512.2
+```
+
+Obtaining Pandemics data
+```R
+# Pandemic historical records
+ pnds <- pandemics.data(tgt="pandemics")
+
+# Pandemics vaccines development times
+ pnds.vacs <- pandemics.data(tgt="pandemics_vaccines")
 ```
 
 
@@ -1219,9 +1243,10 @@ https://www.isroset.org/pub_paper/IJSRMS/9-IJSRMS-04417.pdf
 <!-- https://www.repidemicsconsortium.org/2020-06-09-covid-challenge/ -->
 
 ##### CoronaWhy datasets
-<!-- 
-* http://datasets.coronawhy.org/dataset.xhtml?persistentId=doi:10.5072/FK2/MYQFTR
--->
+<!-- ~*~ -->
+<!-- * http://datasets.coronawhy.org/dataset.xhtml?persistentId=doi:10.5072/FK2/MYQFTR -->
+* https://datasets.coronawhy.org/dataset.xhtml?persistentId=doi:10.5072/FK2/MYQFTR
+<!-- ~*~ -->
 
 ##### Dashboards
 * https://shiny.cliffweaver.com/covid/  --  https://shiny.cliffweaver.com/covid/#section-about
@@ -1250,7 +1275,7 @@ Preprints (2020) --
 
 * https://youtu.be/n-sCFsUw0yg
 
-* https://www.kaggle.com/nishantbhadauria/r-covid19-analytics-tutorial-sir-model-maps-glms
+<!-- * https://www.kaggle.com/nishantbhadauria/r-covid19-analytics-tutorial-sir-model-maps-glms -->
 * https://rstudio-pubs-static.s3.amazonaws.com/627247_4a5e9d5780844ca2bcddfdd13733cb67.html
 * https://people.math.carleton.ca/~davecampbell/datasets/2020/07/24/covid-data-covid-19-govenrmne-of-canada-and-jhu-csse/
 * https://theactuarialclub.com/2020/05/15/covid-19-analysis-modelling-visualization-using-r/
@@ -1263,7 +1288,7 @@ Preprints (2020) --
 * https://rpubs.com/Drshunya
 * https://rpubs.com/vegatroz
 * https://forums.futura-sciences.com/programmation-langages-algorithmique/883064-r-data-science-analyse-de-donnees-covid19.html                               
-* https://www.europeanvalley.es/noticias/analizamos-datos-del-covid19-con-r/
+<!-- * https://www.europeanvalley.es/noticias/analizamos-datos-del-covid19-con-r/ -->
 * https://medium.com/r-tutorials/how-to-get-daily-covid-19-data-using-r-25bde150df5e
 * https://medium.com/analytics-vidhya/corona-19-visualizations-with-r-and-tableau-595296894ca7                                                                
 * http://www.sanaitics.com/research-paper.aspx?id=112
@@ -1279,12 +1304,33 @@ Preprints (2020) --
     <summary>Click to Expand/Collapse</summary>
 -->
 <!-- badges: start -->
+<!-- CRAN stats -->
+<!--
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-last-release/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![CRAN checks](https://cranchecks.info/badges/worst/covid19.analytics)](https://cranchecks.info/pkgs/covid19.analytics)
 [![Downloads last.mnth](https://cranlogs.r-pkg.org/badges/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
-[![Downloads last.day](https://cranlogs.r-pkg.org/badges/last-week/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
+[![Downloads last.week](https://cranlogs.r-pkg.org/badges/last-week/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![Downloads last.day](https://cranlogs.r-pkg.org/badges/last-day/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
+-->
+<!-- GitHub badges stats -->
+<!--
+![R language](https://img.shields.io/badge/R-276DC3?style=plastic&logo=r&logoColor=white)
+![Maintained](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
+![License](https://img.shields.io/github/license/mponce0/covid19.analytics.svg)
+![Release](https://img.shields.io/github/release/mponce0/covid19.analytics.svg)
+![Commits](https://img.shields.io/github/commits-since/mponce0/covid19.analytics/latest.svg)
+![GitHub Downloads](https://img.shields.io/github/downloads/mponce0/covid19.analytics/total?color=blue&label=GitHub%20downloads)
+![GitHub All releases](https://img.shields.io/github/downloads/mponce0/covid19.analytics/total?color=blue&style=plastic)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/downloads-pre/mponce0/covid19.analytics/latest/total?color=blue&style=plastic)
+![GitHub release (latest by SemVer)](https://img.shields.io/github/downloads/mponce0/covid19.analytics/latest/total?color=blue&style=plastic)
+![Downloads](https://img.shields.io/github/downloads/mponce0/covid19.analytics/total.svg)
+-->
+<!--
+![](https://starchart.cc/mponce0/covid19.analytics.svg)
+![GHusrStats](https://github-readme-stats.vercel.app/api?username=mponce0&theme=blue-green)
+![GHusrStats](https://github-readme-stats.vercel.app/api/top-langs/?username=mponce0&theme=blue-green)
+-->
 <!-- badges: end -->
 
 <!--
@@ -1296,9 +1342,16 @@ Preprints (2020) --
 -->
 
 <!--
-<img src="https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png" width="800" /> ![](https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png)
+<img src="https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png" width="800" />
+![](https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png)
 
-<img align="left" src="https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png" width="200" /> ![](https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png)
+<img align="left" src="https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png" width="200" />
+![](https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png)
+
+<p align='center'>
+<img align="left" src="https://github.com/mponce0/R.pckgs.stats/blob/master/DWNLDS_covid19.analytics.png" width="40%" />
+<img align="left" src="https://starchart.cc/mponce0/covid19.analytics.svg" width="50%" />
+</p>
 -->
 
 <!--
@@ -1329,28 +1382,28 @@ Preprints (2020) --
     <summary>Click to Expand/Collapse</summary>
 
 ### Data Sources <a name="dataSrcs"></a>
-[1] <a name="JHUrepo"></a> 2019 Novel CoronaVirus CoViD-19 (2019-nCoV) Data Repository by
+[1] <a name="JHUrepo"></a> 2019 Novel CoronaVirus COVID-19 (2019-nCoV) Data Repository by
 Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)
 https://github.com/CSSEGISandData/COVID-19
 
 [2] <a name="TORdata"></a> COVID-19: Status of Cases in Toronto -- City of Toronto
-https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/
+https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/
 
 [3] <a name="ODtor"></a> COVID-19: Open Data Toronto
 https://open.toronto.ca/dataset/covid-19-cases-in-toronto/
 
 [4] <a name="HealthCan"></a> COVID-19: Health Canada
+https://health-infobase.canada.ca/covid-19/
 <!--
  https://health-infobase.canada.ca/src/data/covidLive
  https://health-infobase.canada.ca/src/data/covidLive/covid19-download.csv
 -->
-https://health-infobase.canada.ca/covid-19/
 
 [5] <a name="NCBIgenome"></a> Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome
 NCBI Reference Sequence: NC_045512.2
 https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2
 
-[6] <a name="OWIDvaccination"></a> CoViD-19 Vaccination and Testing records from "Our World In Data" (OWID)
+[6] <a name="OWIDvaccination"></a> COVID-19 Vaccination and Testing records from "Our World In Data" (OWID)
 https://github.com/owid/
  
 [7] <a name="VCpandemics"></a> Pandemics historical records from Visual Capitalist (and sources within)
@@ -1361,9 +1414,13 @@ https://github.com/owid/
 
 
 ### How to Cite this Package  <a name="citation"></a>
-If you are using this package please cite our main publication about the covid19.analytics package:
+If you are using this package please cite our main publication about the `covid19.analytics` package:
 
-https://arxiv.org/abs/2009.01091
+Ponce et al., (2021).
+*"covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the 2019 Coronavirus Disease Pandemic."*
+**Journal of Open Source Software, 6(59), 2995.**
+  https://doi.org/10.21105/joss.02995
+
 
 You can also ask for this citation information in R:
 ```R
@@ -1371,20 +1428,44 @@ You can also ask for this citation information in R:
 
 To cite covid19.analytics in publications use:
 
+  Ponce et al., (2021). covid19.analytics: An R Package to Obtain,
+  Analyze and Visualize Data from the 2019 Coronavirus Disease Pandemic.
+  Journal of Open Source Software, 6(59), 2995.
+  https://doi.org/10.21105/joss.02995
+
+
+A BibTeX entry for LaTeX users is
+
+  @Article{covid19analytics_JOSS,
+    title = "{covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the Coronavirus Disease Pandemic}",
+    author = {Marcelo Ponce and Amit Sandhel},
+    journal = "{Journal of Open Source Software}",
+    year = {2021},
+    vol = {6},
+    doi = {10.21105/joss.02995}
+  }
+```
+
+
+Examples and tutorials are available at,
+```R
+
   Marcelo Ponce, Amit Sandhel (2020). covid19.analytics: An R Package
-  to Obtain, Analyze and Visualize Data from the Corona Virus Disease
+  to Obtain, Analyze and Visualize Data from the Coronavirus Disease
   Pandemic. URL https://arxiv.org/abs/2009.01091
 
 A BibTeX entry for LaTeX users is
 
-  @Article{,
-    title = {covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the Corona Virus Disease Pandemic},
+  @Article{covid19analytics_RefManual,
+    title = "{covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the Coronavirus Disease Pandemic}",
     author = {Marcelo Ponce and Amit Sandhel},
     journal = {pre-print},
     year = {2020},
     url = {https://arxiv.org/abs/2009.01091},
   }
 ```
+
+
 
 
 ## Further Resources
@@ -1429,5 +1510,13 @@ https://wwwnc.cdc.gov/eid/article/25/1/17-1901_article
 * https://coronavirus.jhu.edu/map.html
 * https://coronavirus.jhu.edu/data/new-cases
 <!-- * https://schulich.yorku.ca/covid-19-dynamics/ -->
+
+### Vaccines
+* https://ici.radio-canada.ca/info/2021/03/vaccination-variants-covid-19-arn-pfizer-moderna-spicule-infection-immunite/en
+* https://www.youtube.com/watch?v=K3odScka55A
+* https://www.youtube.com/watch?v=mvA9gs5gxNY
+
+### Models
+* https://www.youtube.com/watch?v=wKOslhIFt6U
 
 </details>

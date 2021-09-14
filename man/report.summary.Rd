@@ -28,7 +28,7 @@ function to summarize the current situation, will download the latest data and s
 }
 \examples{
 # triggers CRAN checks for timing
-\donttest{
+\dontrun{
 # displaying top 10s
 report.summary()
 

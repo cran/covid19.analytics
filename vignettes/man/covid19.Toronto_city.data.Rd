@@ -4,7 +4,7 @@
 \alias{covid19.Toronto_city.data}
 \title{function to import data from the city of Toronto, ON - Canada
 as reported by the City of Toronto
-https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/}
+https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/}
 \usage{
 covid19.Toronto_city.data(
   data.fmt = "TS",
@@ -31,5 +31,5 @@ a dataframe (or a list in the case of "original") with the latest data reported 
 \description{
 function to import data from the city of Toronto, ON - Canada
 as reported by the City of Toronto
-https://www.toronto.ca/home/covid-19/covid-19-latest-city-of-toronto-news/covid-19-status-of-cases-in-toronto/
+https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/
 }
