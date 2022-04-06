@@ -1198,7 +1198,7 @@ plt.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.mo
 	- Tutorials 
 		https://mdl.library.utoronto.ca/covid-19/tutorials
 	- Data & Statistical Sources 
-		  https://mdl.library.utoronto.ca/covid-19/data
+		https://mdl.library.utoronto.ca/covid-19-data-statistical-sources
 * Department of Statistics, Warwick University (UK):
   https://warwick.ac.uk/fac/sci/statistics/courses/offerholders-post-2020/welcome2020/package1
 

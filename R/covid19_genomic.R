@@ -140,11 +140,12 @@ c19.refGenome.data <- function(src='livedata', graphics.ON=TRUE) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # obtain covid19's genomic data
 #' covid19.gen.seq <- c19.refGenome.data()
 #' # display the actual RNA seq
 #' covid19.gen.seq$NC_045512.2
-#'
+#' }
 
 
         ###############################
