@@ -560,7 +560,7 @@ and daily changes in the reported number of cases.
 <!-- ~*~ -->
 ### API Documentation
 <!--
-Documentation of the functions available in the `covid19.analytrics` package can be found at
+Documentation of the functions available in the `covid19.analytics` package can be found at
 https://cran.r-project.org/web/packages/covid19.analytics/covid19.analytics.pdf
 -->
 <!-- ~*~ -->
@@ -827,7 +827,7 @@ In this section, we include basic examples of the main features of the `covid19.
   * We strongly recommend users to check further examples and details about the `covid19.analytics` package available in our manuscript,
 https://arxiv.org/abs/2009.01091 
 
-  * Code/cripts with examples and tutorials are available at https://github.com/mponce0/covid19.analytics/tree/literature/tutorial 
+  * Code/scripts with examples and tutorials are available at https://github.com/mponce0/covid19.analytics/tree/literature/tutorial 
 
 <details>
     <summary>Click to Expand/Collapse</summary>

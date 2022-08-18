@@ -17,9 +17,10 @@ function to obtain sequencing data grom NCBI
 Reference:  https://www.ncbi.nlm.nih.gov/nuccore/NC_045512.2
 }
 \examples{
+\dontrun{
 # obtain covid19's genomic data
 covid19.gen.seq <- c19.refGenome.data()
 # display the actual RNA seq
 covid19.gen.seq$NC_045512.2
-
+}
 }
