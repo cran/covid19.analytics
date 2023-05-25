@@ -13,6 +13,9 @@
 #       UseMethod("print",report.obj)
 #}
 
+#S3method(print, report.obj)
+print <- function(report.obj) UseMethod("print", report.obj)
+
 print.report <- function(report.obj) {
 #' function associated to the 'report' object method
 #' @param  report.obj  'report' object

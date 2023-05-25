@@ -5,6 +5,8 @@
 <!--
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-last-release/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![CRAN checks](https://cranchecks.info/badges/worst/covid19.analytics)](https://cranchecks.info/pkgs/covid19.analytics)
+[![cran checks](https://badges.cranchecks.info/worst/covid19.analytics.svg)](https://cran.r-project.org/web/checks/check_results_covid19.analytics.html)
+[![cran checks](https://badges.cranchecks.info/summary/covid19.analytics.svg)](https://cran.r-project.org/web/checks/check_results_covid19.analytics.html)
 [![Downloads](https://cranlogs.r-pkg.org/badges/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![R-CMD-check](https://github.com/mponce0/covid19.analytics/actions/workflows/r.yml/badge.svg)](https://github.com/mponce0/covid19.analytics/actions/workflows/r.yml)
@@ -101,7 +103,8 @@ Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)
 https://github.com/CSSEGISandData/COVID-19
 
  * **[2]** <a name="TORdata"></a> COVID-19: Status of Cases in Toronto -- City of Toronto
-https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/
+https://www.toronto.ca/community-people/health-wellness-care/health-programs-advice/respiratory-viruses/covid-19/covid-19-pandemic-data/
+<!-- https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/ -->
 
  * **[3]** <a name="ODtor"></a> COVID-19: Open Data Toronto
 https://open.toronto.ca/dataset/covid-19-cases-in-toronto/
@@ -1202,12 +1205,16 @@ plt.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.mo
 * Department of Statistics, Warwick University (UK):
   https://warwick.ac.uk/fac/sci/statistics/courses/offerholders-post-2020/welcome2020/package1
 
+* ResCOVID-19 (FR):
+   http://rescovid19.fr/db/outils.html
 
-##### Compute Ontario, Compute Canada
+
 <!--
+##### Compute Ontario, Compute Canada
 * https://computeontario.ca/in-conversation-with-marcelo-ponce-about-his-covid19-analytics-r-package/
 -->
 
+<!--
 ##### Social media
 * https://twitter.com/ComputeOntario/status/1245825891562917888
 * https://twitter.com/ComputeOntario/status/1270736806724632576?s=20
@@ -1216,8 +1223,8 @@ plt.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.mo
 * https://twitter.com/JamesBradley002/status/1247139312245899264?s=20
 * https://twitter.com/hauselin/status/1247209180492169218?s=20
 * https://twitter.com/Ssiamba/status/1271794279510409217?s=20
-* https://m.facebook.com/nexacu/photos/a.133550136841673/1407169096146431/?type=3                                                                             
-
+* https://facebook.com/nexacu/photos/a.133550136841673/1407169096146431/?type=3
+-->
 
 </details>
 
@@ -1245,12 +1252,15 @@ https://www.isroset.org/pub_paper/IJSRMS/9-IJSRMS-04417.pdf
 ##### CoronaWhy datasets
 <!-- ~*~ -->
 <!-- * http://datasets.coronawhy.org/dataset.xhtml?persistentId=doi:10.5072/FK2/MYQFTR -->
-* https://datasets.coronawhy.org/dataset.xhtml?persistentId=doi:10.5072/FK2/MYQFTR
+<!-- * https://datasets.coronawhy.org/dataset.xhtml?persistentId=doi:10.5072/FK2/MYQFTR -->
+ * https://github.com/mponce0/covid19.analytics/issues/4
 <!-- ~*~ -->
 
 ##### Dashboards
+<!--
 * https://shiny.cliffweaver.com/covid/  --  https://shiny.cliffweaver.com/covid/#section-about
 * https://shiny.cliffweaver.com/covid_mobility/  --  https://shiny.cliffweaver.com/covid_mobility/#section-about
+-->
 * https://covid19analytics.scinet.utoronto.ca
 
 
@@ -1259,8 +1269,11 @@ https://www.isroset.org/pub_paper/IJSRMS/9-IJSRMS-04417.pdf
 Preprints (2020) --
  https://doi.org/10.20944/preprints202007.0001.v1
 * M.Murali and R.Srinivasan, "Forecasting COVID-19 Confirmned Cases in India with Snaive, ETS, ARIMA Methods"*, (2020) --
-  http://bulletinmonumental.com/gallery/4-sep2020.pdf
+  https://bulletinmonumental.com/volume-21-issue-9-september-2020/
+  <!--https://bulletinmonumental.com/gallery/4-sep2020.pdf-->
+<!--
 * https://www.researchgate.net/publication/341832722_An_Evaluation_of_the_Frameworks_for_Predicting_COVID-19_in_Nigeria_using_Data_Analytics
+-->
 * Annex I -- RDA COVID-19 Epidemiology WG, *"Sharing COVID-19 Epidemiology Data"*, Research Data Alliance (2020) --
   https://doi.org/10.15497/rda00049
   * A.Claire C.et al., *"COVID-19 Surveillance Data and Models: Review and Analysis, Part 1"*, SSRN (Sept.2020) --
@@ -1308,6 +1321,8 @@ Preprints (2020) --
 <!--
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version-last-release/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![CRAN checks](https://cranchecks.info/badges/worst/covid19.analytics)](https://cranchecks.info/pkgs/covid19.analytics)
+[![cran checks](https://badges.cranchecks.info/worst/covid19.analytics.svg)](https://cran.r-project.org/web/checks/check_results_covid19.analytics.html)
+[![cran checks](https://badges.cranchecks.info/summary/covid19.analytics.svg)](https://cran.r-project.org/web/checks/check_results_covid19.analytics.html)
 [![Downloads last.mnth](https://cranlogs.r-pkg.org/badges/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![Downloads last.week](https://cranlogs.r-pkg.org/badges/last-week/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
 [![Downloads last.day](https://cranlogs.r-pkg.org/badges/last-day/covid19.analytics)](https://cran.r-project.org/package=covid19.analytics)
@@ -1387,7 +1402,8 @@ Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)
 https://github.com/CSSEGISandData/COVID-19
 
 [2] <a name="TORdata"></a> COVID-19: Status of Cases in Toronto -- City of Toronto
-https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/
+https://www.toronto.ca/community-people/health-wellness-care/health-programs-advice/respiratory-viruses/covid-19/covid-19-pandemic-data/
+<!-- https://www.toronto.ca/home/covid-19/covid-19-pandemic-data/ -->
 
 [3] <a name="ODtor"></a> COVID-19: Open Data Toronto
 https://open.toronto.ca/dataset/covid-19-cases-in-toronto/

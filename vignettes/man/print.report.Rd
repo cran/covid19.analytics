@@ -2,7 +2,7 @@
 % Please edit documentation in R/covid19_print.R
 \name{print.report}
 \alias{print.report}
-\title{method associated with 'report' objects}
+\title{function associated to the 'report' object method}
 \usage{
 \method{print}{report}(report.obj)
 }
@@ -10,13 +10,6 @@
 \item{report.obj}{'report' object}
 }
 \description{
-method associated with 'report' objects
+function associated to the 'report' object method
 }
-\keyword{'report'}
-\keyword{associated}
-\keyword{function}
 \keyword{internal}
-\keyword{method}
-\keyword{object}
-\keyword{the}
-\keyword{to}

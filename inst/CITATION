@@ -1,10 +1,10 @@
 citHeader("To cite covid19.analytics in publications use:")
 
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "covid19.analytics: An R Package to Obtain, Analyze and Visualize Data from the Coronavirus Disease Pandemic",
-  author       = personList(as.person("Marcelo Ponce"),
-                   as.person("Amit Sandhel")),
+  author       = c(person("Marcelo","Ponce"),
+			person("Amit","Sandhel")),
   journal      = "Journal of Open Source Software",
   year         = "2021",
   volume       = "6",
