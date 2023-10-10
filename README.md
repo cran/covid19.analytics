@@ -1205,9 +1205,10 @@ plt.SIR.model(world.SIR.model,"World",interactiveFig=TRUE,fileName="world.SIR.mo
 * Department of Statistics, Warwick University (UK):
   https://warwick.ac.uk/fac/sci/statistics/courses/offerholders-post-2020/welcome2020/package1
 
+<!--
 * ResCOVID-19 (FR):
    http://rescovid19.fr/db/outils.html
-
+-->
 
 <!--
 ##### Compute Ontario, Compute Canada
@@ -1495,13 +1496,14 @@ A BibTeX entry for LaTeX users is
 </p>
 
 
+<!--
 ### Other References
 * Delamater PL, Street EJ, Leslie TF, Yang Y, Jacobsen KH.
 Complexity of the Basic Reproduction Number (R0).
 Emerg Infect Dis. 2019;25(1):1-4.
 https://dx.doi.org/10.3201/eid2501.171901
 https://wwwnc.cdc.gov/eid/article/25/1/17-1901_article
-
+-->
 
 ### More R Resources
 * The R Epidemics Consortium (RECON): https://www.repidemicsconsortium.org/

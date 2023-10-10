@@ -1065,9 +1065,11 @@ mtrends <- function(data, geo.loc=NULL, confBnd=TRUE, info="") {
 #' @importFrom  graphics   barplot par plot abline axis 
 #'
 #' @examples
+#' # triggers CRAN checks for timing
+#' \dontrun{
 #' ts.data <- covid19.data("ts-confirmed")
 #' mtrends(ts.data, geo.loc=c("Canada","Ontario","Uruguay","Italy"))
-#'
+#' }
 
         # check that the data is time series
         chk.TS.data(data,xtp=TRUE)

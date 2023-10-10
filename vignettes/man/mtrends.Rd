@@ -19,7 +19,9 @@ mtrends(data, geo.loc = NULL, confBnd = TRUE, info = "")
 function to visualize different indicators for trends in daily changes of cases reported as time series data, for mutliple (or single) locations
 }
 \examples{
+# triggers CRAN checks for timing
+\dontrun{
 ts.data <- covid19.data("ts-confirmed")
 mtrends(ts.data, geo.loc=c("Canada","Ontario","Uruguay","Italy"))
-
+}
 }

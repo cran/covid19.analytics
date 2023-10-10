@@ -71,6 +71,28 @@ covid19.Toronto_city.data <- function(data.fmt="TS",local.data=FALSE,debrief=FAL
 
 	loadLibrary("readxl")
 
+
+        ###############################
+
+        ## function for error handling
+        errorHandling.Msg <- function(condition,target.case) {
+                header('=')
+                message("A problem was detected when trying to retrieve the data for the package: ",target.case)
+                if (grepl("404 Not Found",condition)) {
+                        message("The URL or file was not found! Please contact the developer about this!")
+                } else {
+                        message("It is possible that your internet connection is down! Please check!")
+                }
+                message(condition,'\n')
+                header('=')
+
+                # update problems counter
+                #pkg.env$problems <- pkg.env$problems + 1
+        }
+
+        ###############################
+
+
 	# identify source of the data
 	if (!local.data) {
 		# Google drive URL, with "City of Toronto" data
@@ -87,7 +109,20 @@ covid19.Toronto_city.data <- function(data.fmt="TS",local.data=FALSE,debrief=FAL
 		#} else {
 		#	stop("curl/libcurl; needed to download data from internet")
 		#}
-		download.file(city.of.Toronto.data, destfile=Tor.xlsx.file, mode = 'wb' )	#method=dwnld.method)
+		tryCatch(download.file(city.of.Toronto.data, destfile=Tor.xlsx.file, mode = 'wb' )	#method=dwnld.method)
+			,
+			# warning
+			warning = function(cond) {
+                                errorHandling.Msg(cond,city.of.Toronto.data)
+                	}
+			,
+                	# error
+               
+			error = function(e){
+                                errorHandling.Msg(e,city.of.Toronto.data)
+                	}
+		#	error = function(e) print(paste(file, 'did not work out'))) 
+		)
         } else {
                 # use local data
   		covid19.pckg <- 'covid19.analytics'
