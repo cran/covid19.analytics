@@ -1,6 +1,7 @@
-4a0352d45ccd9cf361ecbac75055978b *DESCRIPTION
-78a70062669e2d5ba931b28932ba20f5 *NAMESPACE
-abc23ef9a30324d1d9ba490f5e248fe6 *NEWS
+65eb64d248554fd9d80408482da979dd *DESCRIPTION
+c355386811ffc3c2351c2840eb1f7a45 *NAMESPACE
+689d7292476368ce4f3af70b18b15e83 *NEWS
+168d77a6993fc6265f39e2b7f5b7cb33 *R/aux_IOutils.R
 6402f97a51f675fbb7d66a5b42f48723 *R/aux_geos.R
 1b47b49355e729f940b57032af9eb61f *R/aux_stats.R
 83b558b20498772ff59208ae90e33497 *R/aux_utils.R
@@ -10,7 +11,7 @@ d3eadd2ed983761f9745d1358b45614d *R/covid19_anal.R
 397e79c4867915b78ad7f68730406354 *R/covid19_checks.R
 d3e7a28271b144b299478392083d988e *R/covid19_dashboard-wrapper.R
 efe3c46893cac22ebc0adeb318d0185d *R/covid19_dashboard.R
-e593095e80fd998bd59fd811cf1fd10f *R/covid19_genomic.R
+861ba4dd6f9a4cc1ab20e184d24758d2 *R/covid19_genomic.R
 5c35605b7caaae4699c96a0fae83ee33 *R/covid19_models.R
 f7474aa4412e8046ac075d395e1ec2e4 *R/covid19_plts.R
 e7a0eeee16f5eed5d3e26f3235c51425 *R/covid19_print.R
@@ -20,12 +21,12 @@ fdad50b6f43359b93e3389e432e43636 *R/covid19_seq.R
 d8dcbcafef6b55a4c9ee1ecb40c6cadf *R/covid19_vaccination_testing.R
 40ceac08313a4837f4e10e46ff460fac *R/pandemics.R
 8fe65d3c84a0f013e8b195390cf3a03d *R/tor_utils.R
-d9134f66322646bad52560b58d2c068c *README.md
+5a1922c147b8113c82b9abafb3178937 *README.md
 6e6875be6b1cf5bddb66799095390751 *build/vignette.rds
 8b525ddd00d8409d8a3d5ccf190b1301 *inst/CITATION
 3c9e2d06e8560272e30c98b0c827478b *inst/doc/covid19.analytics.R
 fb5349c51650f7e459f89640b38ca424 *inst/doc/covid19.analytics.Rmd
-889a4824c5f9140bfdff0fa43c74ed1c *inst/doc/covid19.analytics.html
+a11b354327d5a9925298695b4ba38d2f *inst/doc/covid19.analytics.html
 b63ee6d682a1bd95e15d04d93a763df6 *inst/extdata/02-01-2021.csv.RDS
 a128d7f0fc75469ee851812fad790cfb *inst/extdata/Coronaviridae_runs.csv.rds
 0a2c6dca211847627509d4d618999513 *inst/extdata/GCF_009858895.2_ASM985889v3_genomic.gff.gz
@@ -107,6 +108,7 @@ e8a08f040c85db156db4cc957692e264 *man/figures/report-summ-agg.pdf
 f2a2223690b04ac079341a3616cea573 *man/genModel.Rd
 686988359d44cc60d6043ce9ac42634d *man/generate.SIR.model.Rd
 b46b42b2df0d76c5a14815f437bdabc8 *man/geographicalRegions.Rd
+dfc0079ae9b2d8dce09aaf34a064ffce *man/getFile.Rd
 807297463239bc8f79b54c03c6f286cb *man/growth.rate.Rd
 da0e3f474e910ecd2fd28fb7c36e071b *man/header.Rd
 71191faff169fd7d495dd58b94e61518 *man/header0.Rd
@@ -136,9 +138,9 @@ f7f4a5f256d35a10ea35b5f8b8875d14 *man/single.trend.Rd
 7d8de393113523bf178f55ea6a4cd739 *man/sweep.SIR.models.Rd
 bfd7050b5949a717bcf025cc432df376 *man/totals.plt.Rd
 4ac94dc8b79f00e79b39e1bde8f5cdcb *man/tots.per.location.Rd
-9047700979768e62084b52815df798da *tests/testthat.R
+edc2e80ee8275e16ee9a9c81b3bb9c26 *tests/testthat.R
 fe1b5235a1fb89e4c07e03a29afd4c04 *tests/testthat/covid19_checks_tests.R
-de0bc0777a4cf430b050c215e904e1db *tests/testthat/test_examples.R
+0ab78709ee33e0a8c57fe9f5fd2924bb *tests/testthat/test_examples.R
 fb5349c51650f7e459f89640b38ca424 *vignettes/covid19.analytics.Rmd
 33bd3ee163874fe2952a5ba9e8009687 *vignettes/man/OWID.repos.Rd
 c97e415d13be028058af86728d04b76c *vignettes/man/X.covid19.genomic.data.Rd
@@ -200,6 +202,7 @@ e8a08f040c85db156db4cc957692e264 *vignettes/man/figures/report-summ-agg.pdf
 f2a2223690b04ac079341a3616cea573 *vignettes/man/genModel.Rd
 686988359d44cc60d6043ce9ac42634d *vignettes/man/generate.SIR.model.Rd
 b46b42b2df0d76c5a14815f437bdabc8 *vignettes/man/geographicalRegions.Rd
+dfc0079ae9b2d8dce09aaf34a064ffce *vignettes/man/getFile.Rd
 807297463239bc8f79b54c03c6f286cb *vignettes/man/growth.rate.Rd
 da0e3f474e910ecd2fd28fb7c36e071b *vignettes/man/header.Rd
 71191faff169fd7d495dd58b94e61518 *vignettes/man/header0.Rd

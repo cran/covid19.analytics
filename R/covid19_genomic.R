@@ -9,11 +9,60 @@
 
 
 getFile <- function(url=NULL,fileName=NULL) {
-                
+#' auxiliary function to download files in a protected fashion, i.e. against
+#' errors in the downloading procedure
+#'
+#' @param  url  resource's URL on the web
+#' @param  fileName  name of the resource (file) to download
+#'
+#' keywords internal
+#'
+#' @importFrom curl has_internet
+
+        ###############################
+
+        ## function for error handling
+        errorHandling.Msg <- function(condition,target.case) {
+                #header('=')
+                message("A problem was detected when trying to retrieve the data using: ",target.case)
+                if (grepl("404 Not Found",condition)) {
+                        message("The URL or file was not found! Please contact the developer about this!")
+                } else {
+                        message("It is possible that your internet connection is down! Please check!")
+                }
+                message(condition,'\n')
+                #header('=')
+
+                # update problems counter
+                #pkg.env$problems <- pkg.env$problems + 1
+
+        }
+
+        ###############################
+
+
         if (!is.null(url) & !is.null(fileName)) {
                 fileNP <- normalizePath(file.path(tempdir(), fileName), mustWork=FALSE)
                 remote.loc <- paste0(url,fileName)
-                download.file(remote.loc,fileNP)
+
+                #download.file(remote.loc,fileNP)
+                tryCatch({
+			if (has_internet()) {
+				download.file(remote.loc,fileNP)
+			} else {
+				stop("Internet access unavailable!")
+			}
+                        },
+                        # warning
+                        warning = function(cond) {
+                                errorHandling.Msg(cond,remote.loc)
+                        },
+                        # error
+                        error = function(e){
+                                errorHandling.Msg(e,remote.loc)
+                        }
+                )
+
 
                 if (!file.exists(fileNP)) {
                         stop("Error download file",fileName,"from ",url,'into',fileNP)
@@ -516,7 +565,8 @@ c19.genomic.data <- function(src='livedata', accOnly=TRUE) {
 		ann.file.name <- "GCF_009858895.2_ASM985889v3_genomic.gff.gz"
                 ann.file <- normalizePath(file.path(tempdir(), ann.file.name), mustWork=FALSE)
 		ann.remote.loc <- paste0(ann.url,ann.file.name)
-		download.file(ann.remote.loc,ann.file)
+		#download.file(ann.remote.loc,ann.file)
+		getFile(ann.url,ann.file.name)
 		#ann.data <- read.gff(ann.file)
 	} else if (src=='local') {
 		ann.file <- paste0(URL,"GCF_009858895.2_ASM985889v3_genomic.gff.gz")

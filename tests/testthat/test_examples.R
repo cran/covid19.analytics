@@ -7,6 +7,8 @@
 #############################################
 test_that("Data Retrieval", {
 
+	skip_if_not_installed("curl")
+
 	loc.data <- c(F,T)
 
 	for (repo in loc.data) {
@@ -26,7 +28,8 @@ test_that("Data Retrieval", {
 
 	# Toronto Data
         # original data type
-        expect_type(covid19.Toronto.data(origin="city",data.fmt="original"), "list")
+        if (curl::has_internet())
+		expect_type(covid19.Toronto.data(origin="city",data.fmt="original"), "list")
 
         # TS Toronto data
 	# failing on WINDOWS ##i386

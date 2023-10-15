@@ -83,7 +83,7 @@ In addition to this, the package has a few more adds-on:
  https://mponce0.github.io/covid19.analytics/
  
  * a dashboard for interactive usage of the package with extended capabilities
- for users without any coding expertise, https://covid19analytics.scinet.utoronto.ca
+ for users without any coding expertise, covid19analytics.scinet.utoronto.ca
 
    The dashboard can also be deployed locally using the `covid19Explorer()` function which
  is part of the `covid19.analytics` package.
@@ -1262,7 +1262,7 @@ https://www.isroset.org/pub_paper/IJSRMS/9-IJSRMS-04417.pdf
 * https://shiny.cliffweaver.com/covid/  --  https://shiny.cliffweaver.com/covid/#section-about
 * https://shiny.cliffweaver.com/covid_mobility/  --  https://shiny.cliffweaver.com/covid_mobility/#section-about
 -->
-* https://covid19analytics.scinet.utoronto.ca
+* covid19analytics.scinet.utoronto.ca
 
 
 ##### Other publications and studies
